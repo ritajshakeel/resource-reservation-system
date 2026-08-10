@@ -12,6 +12,9 @@ public class Reservation {
         if (user == null) {
             throw new IllegalArgumentException("User must not be null");
         }
+        if (resource == null) {
+            throw new IllegalArgumentException("Resource must not be null");
+        }
         if (!end.isAfter(start)) {
             throw new IllegalArgumentException("End time must be after start time");
         }
