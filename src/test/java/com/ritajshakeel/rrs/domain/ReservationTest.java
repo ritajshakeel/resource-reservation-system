@@ -29,5 +29,17 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalArgumentException.class)
 	        .hasMessage("User must not be null");
 	}
+	
+	@Test
+	public void testCreatingReservationWithNullResourceThrowsException() {
+	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+	    User user = new User();
+	    Resource resource = null;
+
+	    assertThatThrownBy(() -> new Reservation(user, resource, start, end))
+	        .isInstanceOf(IllegalArgumentException.class)
+	        .hasMessage("Resource must not be null");
+	}
 
 }
