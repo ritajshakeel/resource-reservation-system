@@ -23,4 +23,20 @@ public class Reservation {
         this.start = start;
         this.end = end;
     }
+
+	public User getUser() {
+		return user;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public LocalDateTime getStart() {
+		return start;
+	}
+
+	public LocalDateTime getEnd() {
+		return end;
+	}
 }
