@@ -57,5 +57,17 @@ public class ReservationTest {
 	    assertThat(reservation.getStart()).isEqualTo(start);
 	    assertThat(reservation.getEnd()).isEqualTo(end);
 	}
+	
+	@Test
+	public void testNewReservationHasPendingStatusByDefault() {
+	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+	    User user = new User();
+	    Resource resource = new Resource();
+
+	    Reservation reservation = new Reservation(user, resource, start, end);
+
+	    assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.PENDING);
+	}
 
 }
