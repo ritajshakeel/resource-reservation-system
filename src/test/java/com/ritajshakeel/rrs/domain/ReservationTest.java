@@ -1,8 +1,9 @@
 package com.ritajshakeel.rrs.domain;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import java.time.LocalDateTime;
 import org.junit.Test;
 
 public class ReservationTest {
@@ -12,7 +13,7 @@ public class ReservationTest {
         LocalDateTime start = LocalDateTime.of(2026, 7, 12, 10, 0);
         LocalDateTime end = LocalDateTime.of(2026, 7, 12, 9, 0);
         User user = new User("Alice");
-        Resource resource = new Resource();
+        Resource resource = new Resource("Meeting Room A");
 
         assertThatThrownBy(() -> new Reservation(user, resource, start, end))
             .isInstanceOf(IllegalArgumentException.class)
@@ -24,7 +25,7 @@ public class ReservationTest {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
 	    User user = null;
-	    Resource resource = new Resource();
+        Resource resource = new Resource("Meeting Room A");
 
 	    assertThatThrownBy(() -> new Reservation(user, resource, start, end))
 	        .isInstanceOf(IllegalArgumentException.class)
@@ -48,7 +49,7 @@ public class ReservationTest {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
 	    User user = new User("Alice");
-	    Resource resource = new Resource();
+        Resource resource = new Resource("Meeting Room A");
 
 	    Reservation reservation = new Reservation(user, resource, start, end);
 
@@ -63,7 +64,7 @@ public class ReservationTest {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
 	    User user = new User("Alice");
-	    Resource resource = new Resource();
+	    Resource resource = new Resource("Meeting Room A");
 
 	    Reservation reservation = new Reservation(user, resource, start, end);
 
@@ -74,7 +75,7 @@ public class ReservationTest {
 	public void testConfirmingPendingReservationChangesStatusToConfirmed() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 
 	    reservation.confirm();
 
@@ -85,7 +86,7 @@ public class ReservationTest {
 	public void testCancellingPendingReservationChangesStatusToCancelled() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 
 	    reservation.cancel();
 
@@ -96,7 +97,7 @@ public class ReservationTest {
 	public void testConfirmingCancelledReservationThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 	    reservation.cancel();
 
 	    assertThatThrownBy(() -> reservation.confirm())
@@ -108,7 +109,7 @@ public class ReservationTest {
 	public void testCancellingCancelledReservationThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 	    reservation.cancel();
 
 	    assertThatThrownBy(() -> reservation.cancel())

@@ -4,26 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 
-public class UserTest {
+public class ResourceTest {
 
     @Test
-    public void testCreatingUserWithNullNameThrowsException() {
-        assertThatThrownBy(() -> new User(null))
+    public void testCreatingResourceWithNullNameThrowsException() {
+        assertThatThrownBy(() -> new Resource(null))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Name must not be null");
     }
-    
+
     @Test
-    public void testCreatingUserWithEmptyNameThrowsException() {
-        assertThatThrownBy(() -> new User(""))
+    public void testCreatingResourceWithEmptyNameThrowsException() {
+        assertThatThrownBy(() -> new Resource(""))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Name must not be empty");
     }
     
     @Test
     public void testGetNameReturnsConstructorValue() {
-        User user = new User("Alice");
+        Resource resource = new Resource("Meeting Room A");
 
-        assertThat(user.getName()).isEqualTo("Alice");
+        assertThat(resource.getName()).isEqualTo("Meeting Room A");
     }
 }
