@@ -11,7 +11,7 @@ public class ReservationTest {
 	public void testCreatingReservationWithEndBeforeStartThrowsException() {
         LocalDateTime start = LocalDateTime.of(2026, 7, 12, 10, 0);
         LocalDateTime end = LocalDateTime.of(2026, 7, 12, 9, 0);
-        User user = new User();
+        User user = new User("Alice");
         Resource resource = new Resource();
 
         assertThatThrownBy(() -> new Reservation(user, resource, start, end))
@@ -35,7 +35,7 @@ public class ReservationTest {
 	public void testCreatingReservationWithNullResourceThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    User user = new User();
+	    User user = new User("Alice");
 	    Resource resource = null;
 
 	    assertThatThrownBy(() -> new Reservation(user, resource, start, end))
@@ -47,7 +47,7 @@ public class ReservationTest {
 	public void testCreatingValidReservationStoresUserResourceAndTimes() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    User user = new User();
+	    User user = new User("Alice");
 	    Resource resource = new Resource();
 
 	    Reservation reservation = new Reservation(user, resource, start, end);
@@ -62,7 +62,7 @@ public class ReservationTest {
 	public void testNewReservationHasPendingStatusByDefault() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    User user = new User();
+	    User user = new User("Alice");
 	    Resource resource = new Resource();
 
 	    Reservation reservation = new Reservation(user, resource, start, end);
@@ -74,7 +74,7 @@ public class ReservationTest {
 	public void testConfirmingPendingReservationChangesStatusToConfirmed() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User(), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
 
 	    reservation.confirm();
 
@@ -85,7 +85,7 @@ public class ReservationTest {
 	public void testCancellingPendingReservationChangesStatusToCancelled() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User(), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
 
 	    reservation.cancel();
 
@@ -96,7 +96,7 @@ public class ReservationTest {
 	public void testConfirmingCancelledReservationThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User(), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
 	    reservation.cancel();
 
 	    assertThatThrownBy(() -> reservation.confirm())
@@ -108,7 +108,7 @@ public class ReservationTest {
 	public void testCancellingCancelledReservationThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
-	    Reservation reservation = new Reservation(new User(), new Resource(), start, end);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource(), start, end);
 	    reservation.cancel();
 
 	    assertThatThrownBy(() -> reservation.cancel())
