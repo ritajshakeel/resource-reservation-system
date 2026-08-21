@@ -1,7 +1,24 @@
 package com.ritajshakeel.rrs.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "app_user")
 public class User {
-    private final String name;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    protected User() {
+        // required by JPA/Hibernate
+    }
 
     public User(String name) {
         if (name == null) {
@@ -13,7 +30,11 @@ public class User {
         this.name = name;
     }
 
-	public String getName() {
-		return name;
-	}
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
