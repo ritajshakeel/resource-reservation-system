@@ -47,6 +47,9 @@ public class Reservation {
     }
 
     public void confirm() {
+        if (status == ReservationStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot confirm a cancelled reservation");
+        }
         this.status = ReservationStatus.CONFIRMED;
     }
 
