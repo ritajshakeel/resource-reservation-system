@@ -54,6 +54,9 @@ public class Reservation {
     }
 
     public void cancel() {
+        if (status == ReservationStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot cancel a cancelled reservation");
+        }
         this.status = ReservationStatus.CANCELLED;
     }
 }

@@ -103,5 +103,17 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot confirm a cancelled reservation");
 	}
+	
+	@Test
+	public void testCancellingCancelledReservationThrowsException() {
+	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+	    Reservation reservation = new Reservation(new User(), new Resource(), start, end);
+	    reservation.cancel();
+
+	    assertThatThrownBy(() -> reservation.cancel())
+	        .isInstanceOf(IllegalStateException.class)
+	        .hasMessage("Cannot cancel a cancelled reservation");
+	}
 
 }
