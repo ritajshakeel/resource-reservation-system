@@ -7,6 +7,7 @@
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <class>com.ritajshakeel.rrs.domain.User</class>
     <class>com.ritajshakeel.rrs.domain.Resource</class>
+    <class>com.ritajshakeel.rrs.domain.Reservation</class>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
       <property name="hibernate.show_sql" value="true"/>
