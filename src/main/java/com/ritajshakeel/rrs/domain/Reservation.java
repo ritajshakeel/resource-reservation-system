@@ -2,12 +2,43 @@ package com.ritajshakeel.rrs.domain;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Reservation {
-    private final User user;
-    private final Resource resource;
-    private final LocalDateTime start;
-    private final LocalDateTime end;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private User user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Resource resource;
+
+    @Column(name = "start_time")
+    private LocalDateTime start;
+
+    @Column(name = "end_time")
+    private LocalDateTime end;
+
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status;
+
+    protected Reservation() {
+        // required by JPA/Hibernate
+    }
 
     public Reservation(User user, Resource resource, LocalDateTime start, LocalDateTime end) {
         if (user == null) {
@@ -26,6 +57,10 @@ public class Reservation {
         this.status = ReservationStatus.PENDING;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -41,7 +76,7 @@ public class Reservation {
     public LocalDateTime getEnd() {
         return end;
     }
-    
+
     public ReservationStatus getStatus() {
         return status;
     }
