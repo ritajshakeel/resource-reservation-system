@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.EntityManager;
@@ -137,5 +138,24 @@ public class JpaReservationRepositoryIT {
         boolean overlaps = repository.existsOverlapping(resource, start, end);
 
         assertThat(overlaps).isFalse();
+    }
+    
+    @Test
+    public void testFindByUserReturnsOnlyThatUsersReservations() {
+        Resource resource = persistResource("Meeting Room E");
+        User alice = persistUser("Alice");
+        User bob = persistUser("Bob");
+        LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+
+        entityManager.getTransaction().begin();
+        repository.save(new Reservation(alice, resource, start, end));
+        repository.save(new Reservation(bob, resource, start.plusHours(2), end.plusHours(2)));
+        entityManager.getTransaction().commit();
+
+        List<Reservation> aliceReservations = repository.findByUser(alice);
+
+        assertThat(aliceReservations).hasSize(1);
+        assertThat(aliceReservations.get(0).getUser()).isEqualTo(alice);
     }
 }

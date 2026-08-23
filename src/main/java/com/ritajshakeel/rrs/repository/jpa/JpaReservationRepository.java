@@ -9,6 +9,7 @@ import jakarta.persistence.TypedQuery;
 import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.ReservationStatus;
 import com.ritajshakeel.rrs.domain.Resource;
+import com.ritajshakeel.rrs.domain.User;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 
 public class JpaReservationRepository implements ReservationRepository {
@@ -39,5 +40,18 @@ public class JpaReservationRepository implements ReservationRepository {
         query.setParameter("end", end);
 
         return query.getSingleResult() > 0;
+    }
+    
+    @Override
+    public List<Reservation> findByUser(User user) {
+        TypedQuery<Reservation> query = entityManager.createQuery(
+            "SELECT r FROM Reservation r WHERE r.user = :user", Reservation.class);
+        query.setParameter("user", user);
+        return query.getResultList();
+    }
+    
+    @Override
+    public Reservation findById(Long id) {
+        return entityManager.find(Reservation.class, id);
     }
 }

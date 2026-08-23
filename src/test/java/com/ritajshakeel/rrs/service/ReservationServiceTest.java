@@ -74,4 +74,26 @@ public class ReservationServiceTest {
         verify(repository, never()).save(any());
         verify(transactionManager, times(1)).doInTransaction(any());
     }
+    
+    @Test
+    public void testConfirmReservationFetchesAndConfirmsWithoutExplicitSave() {
+        Reservation reservation = mock(Reservation.class);
+        when(repository.findById(5L)).thenReturn(reservation);
+
+        service.confirmReservation(5L);
+
+        verify(reservation).confirm();
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    public void testCancelReservationFetchesAndCancelsWithoutExplicitSave() {
+        Reservation reservation = mock(Reservation.class);
+        when(repository.findById(5L)).thenReturn(reservation);
+
+        service.cancelReservation(5L);
+
+        verify(reservation).cancel();
+        verify(repository, never()).save(any());
+    }
 }
