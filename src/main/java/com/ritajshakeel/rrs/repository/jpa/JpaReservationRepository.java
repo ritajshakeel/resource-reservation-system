@@ -21,9 +21,7 @@ public class JpaReservationRepository implements ReservationRepository {
 
     @Override
     public Reservation save(Reservation reservation) {
-        entityManager.getTransaction().begin();
         entityManager.persist(reservation);
-        entityManager.getTransaction().commit();
         return reservation;
     }
 
