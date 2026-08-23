@@ -23,4 +23,20 @@ public class ReservationService {
             return repository.save(new Reservation(user, resource, start, end));
         });
     }
+    
+    public void confirmReservation(Long reservationId) {
+        transactionManager.doInTransaction(repository -> {
+            Reservation reservation = repository.findById(reservationId);
+            reservation.confirm();
+            return null;
+        });
+    }
+
+    public void cancelReservation(Long reservationId) {
+        transactionManager.doInTransaction(repository -> {
+            Reservation reservation = repository.findById(reservationId);
+            reservation.cancel();
+            return null;
+        });
+    }
 }

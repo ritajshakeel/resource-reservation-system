@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.ritajshakeel.rrs.domain.Reservation;
+import com.ritajshakeel.rrs.domain.ReservationStatus;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
 import com.ritajshakeel.rrs.persistence.JpaTransactionManager;
@@ -108,5 +109,19 @@ public class ReservationServiceIT {
             .setParameter("resource", resource)
             .getSingleResult();
         assertThat(count).isEqualTo(1L);
+    }
+    
+    @Test
+    public void testConfirmingReservationPersistsStatusChangeViaDirtyChecking() {
+        User user = persistUser("Dave");
+        Resource resource = persistResource("Meeting Room F");
+        LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+        Reservation saved = service.book(user, resource, start, end);
+
+        service.confirmReservation(saved.getId());
+
+        Reservation found = entityManager.find(Reservation.class, saved.getId());
+        assertThat(found.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
     }
 }

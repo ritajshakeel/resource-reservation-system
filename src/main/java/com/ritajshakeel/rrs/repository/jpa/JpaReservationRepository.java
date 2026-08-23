@@ -49,4 +49,9 @@ public class JpaReservationRepository implements ReservationRepository {
         query.setParameter("user", user);
         return query.getResultList();
     }
+    
+    @Override
+    public Reservation findById(Long id) {
+        return entityManager.find(Reservation.class, id);
+    }
 }

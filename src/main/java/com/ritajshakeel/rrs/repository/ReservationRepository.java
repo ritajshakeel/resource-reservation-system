@@ -14,4 +14,6 @@ public interface ReservationRepository {
     boolean existsOverlapping(Resource resource, LocalDateTime start, LocalDateTime end);
     
     List<Reservation> findByUser(User user);
+    
+    Reservation findById(Long id);
 }
