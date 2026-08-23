@@ -92,7 +92,9 @@ public class JpaReservationRepositoryIT {
         User user = persistUser("Alice");
         LocalDateTime existingStart = LocalDateTime.of(2026, 7, 12, 9, 0);
         LocalDateTime existingEnd = LocalDateTime.of(2026, 7, 12, 10, 0);
+        entityManager.getTransaction().begin();
         repository.save(new Reservation(user, resource, existingStart, existingEnd));
+        entityManager.getTransaction().commit();
 
         LocalDateTime newStart = LocalDateTime.of(2026, 7, 12, 9, 30);
         LocalDateTime newEnd = LocalDateTime.of(2026, 7, 12, 10, 30);
@@ -108,7 +110,9 @@ public class JpaReservationRepositoryIT {
         User user = persistUser("Bob");
         LocalDateTime existingStart = LocalDateTime.of(2026, 7, 12, 9, 0);
         LocalDateTime existingEnd = LocalDateTime.of(2026, 7, 12, 10, 0);
+        entityManager.getTransaction().begin();
         repository.save(new Reservation(user, resource, existingStart, existingEnd));
+        entityManager.getTransaction().commit();
 
         LocalDateTime newStart = LocalDateTime.of(2026, 7, 12, 10, 0);
         LocalDateTime newEnd = LocalDateTime.of(2026, 7, 12, 11, 0);
@@ -126,7 +130,9 @@ public class JpaReservationRepositoryIT {
         LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
         Reservation reservation = new Reservation(user, resource, start, end);
         reservation.cancel();
+        entityManager.getTransaction().begin();
         repository.save(reservation);
+        entityManager.getTransaction().commit();
 
         boolean overlaps = repository.existsOverlapping(resource, start, end);
 
