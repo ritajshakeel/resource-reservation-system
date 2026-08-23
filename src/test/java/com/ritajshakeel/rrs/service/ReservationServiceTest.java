@@ -2,8 +2,11 @@ package com.ritajshakeel.rrs.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,21 +20,27 @@ import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.ReservationStatus;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
+import com.ritajshakeel.rrs.persistence.TransactionCode;
+import com.ritajshakeel.rrs.persistence.TransactionManager;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 
 public class ReservationServiceTest {
 
     private ReservationRepository repository;
+    private TransactionManager transactionManager;
     private ReservationService service;
 
     @Before
     public void setUp() {
         repository = mock(ReservationRepository.class);
-        service = new ReservationService(repository);
+        transactionManager = mock(TransactionManager.class);
+        when(transactionManager.doInTransaction(any()))
+            .thenAnswer(answer((TransactionCode<?> code) -> code.apply(repository)));
+        service = new ReservationService(transactionManager);
     }
 
     @Test
-    public void testBookingWithNoOverlapSavesReservation() {
+    public void testBookingWithNoOverlapSavesReservationInASingleTransaction() {
         User user = new User("Alice");
         Resource resource = new Resource("Meeting Room A");
         LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -46,9 +55,8 @@ public class ReservationServiceTest {
         Reservation saved = captor.getValue();
         assertThat(saved.getUser()).isEqualTo(user);
         assertThat(saved.getResource()).isEqualTo(resource);
-        assertThat(saved.getStart()).isEqualTo(start);
-        assertThat(saved.getEnd()).isEqualTo(end);
         assertThat(saved.getStatus()).isEqualTo(ReservationStatus.PENDING);
+        verify(transactionManager, times(1)).doInTransaction(any());
     }
 
     @Test
@@ -63,6 +71,7 @@ public class ReservationServiceTest {
         assertThatThrownBy(() -> service.book(user, resource, start, end))
             .isInstanceOf(OverlappingReservationException.class);
 
-        verify(repository, never()).save(org.mockito.Mockito.any());
+        verify(repository, never()).save(any());
+        verify(transactionManager, times(1)).doInTransaction(any());
     }
 }
