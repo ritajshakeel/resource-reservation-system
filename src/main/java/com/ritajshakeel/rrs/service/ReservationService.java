@@ -2,6 +2,7 @@ package com.ritajshakeel.rrs.service;
 
 import java.time.LocalDateTime;
 
+import com.google.inject.Inject;
 import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
@@ -11,6 +12,7 @@ public class ReservationService {
 
     private final TransactionManager transactionManager;
 
+    @Inject
     public ReservationService(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }

@@ -3,13 +3,15 @@ package com.ritajshakeel.rrs.persistence;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
+import com.google.inject.Inject;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 import com.ritajshakeel.rrs.repository.jpa.JpaReservationRepository;
 
 public class JpaTransactionManager implements TransactionManager {
 
-    private final EntityManagerFactory entityManagerFactory;
+	private final EntityManagerFactory entityManagerFactory;
 
+    @Inject
     public JpaTransactionManager(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
