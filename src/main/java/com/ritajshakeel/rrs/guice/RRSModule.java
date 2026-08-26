@@ -10,8 +10,12 @@ import com.google.inject.Singleton;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
-import com.ritajshakeel.rrs.persistence.JpaTransactionManager;
-import com.ritajshakeel.rrs.persistence.TransactionManager;
+import com.ritajshakeel.rrs.persistence.JpaResourceTransactionManager;
+import com.ritajshakeel.rrs.persistence.JpaReservationTransactionManager;
+import com.ritajshakeel.rrs.persistence.JpaUserTransactionManager;
+import com.ritajshakeel.rrs.persistence.ResourceTransactionManager;
+import com.ritajshakeel.rrs.persistence.ReservationTransactionManager;
+import com.ritajshakeel.rrs.persistence.UserTransactionManager;
 
 public class RRSModule extends AbstractModule {
 
@@ -36,7 +40,9 @@ public class RRSModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(TransactionManager.class).to(JpaTransactionManager.class);
+        bind(ReservationTransactionManager.class).to(JpaReservationTransactionManager.class);
+        bind(UserTransactionManager.class).to(JpaUserTransactionManager.class);
+        bind(ResourceTransactionManager.class).to(JpaResourceTransactionManager.class);
     }
 
     @Provides

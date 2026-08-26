@@ -4,6 +4,6 @@ import java.util.function.Function;
 
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 
-@FunctionalInterface
-public interface TransactionCode<T> extends Function<ReservationRepository, T> {
+public interface ReservationTransactionManager {
+	<T> T doInTransaction(Function<ReservationRepository, T> code);
 }

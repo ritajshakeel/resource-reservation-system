@@ -2,7 +2,6 @@ package com.ritajshakeel.rrs.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,22 +20,23 @@ import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.ReservationStatus;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
-import com.ritajshakeel.rrs.persistence.TransactionCode;
-import com.ritajshakeel.rrs.persistence.TransactionManager;
+import com.ritajshakeel.rrs.persistence.ReservationTransactionManager;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 
 public class ReservationServiceTest {
 
     private ReservationRepository repository;
-    private TransactionManager transactionManager;
+    private ReservationTransactionManager transactionManager;
     private ReservationService service;
 
     @Before
     public void setUp() {
         repository = mock(ReservationRepository.class);
-        transactionManager = mock(TransactionManager.class);
-        when(transactionManager.doInTransaction(any()))
-            .thenAnswer(answer((TransactionCode<?> code) -> code.apply(repository)));
+        transactionManager = mock(ReservationTransactionManager.class);
+        when(transactionManager.doInTransaction(any())).thenAnswer(invocation -> {
+            Function<ReservationRepository, ?> code = invocation.getArgument(0);
+            return code.apply(repository);
+        });
         service = new ReservationService(transactionManager);
     }
 
@@ -74,7 +75,7 @@ public class ReservationServiceTest {
         verify(repository, never()).save(any());
         verify(transactionManager, times(1)).doInTransaction(any());
     }
-    
+
     @Test
     public void testConfirmReservationFetchesAndConfirmsWithoutExplicitSave() {
         Reservation reservation = mock(Reservation.class);

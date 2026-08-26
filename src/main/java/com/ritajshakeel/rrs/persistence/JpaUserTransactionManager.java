@@ -1,27 +1,30 @@
 package com.ritajshakeel.rrs.persistence;
 
+import java.util.function.Function;
+
+import com.google.inject.Inject;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
-import com.google.inject.Inject;
-import com.ritajshakeel.rrs.repository.ReservationRepository;
-import com.ritajshakeel.rrs.repository.jpa.JpaReservationRepository;
+import com.ritajshakeel.rrs.repository.UserRepository;
+import com.ritajshakeel.rrs.repository.jpa.JpaUserRepository;
 
-public class JpaTransactionManager implements TransactionManager {
+public class JpaUserTransactionManager implements UserTransactionManager {
 
-	private final EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Inject
-    public JpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+    public JpaUserTransactionManager(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
-    public <T> T doInTransaction(TransactionCode<T> code) {
+    public <T> T doInTransaction(Function<UserRepository, T> code) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            ReservationRepository repository = new JpaReservationRepository(entityManager);
+            UserRepository repository = new JpaUserRepository(entityManager);
             T result = code.apply(repository);
             entityManager.getTransaction().commit();
             return result;

@@ -23,7 +23,7 @@ import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.ReservationStatus;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
-import com.ritajshakeel.rrs.persistence.JpaTransactionManager;
+import com.ritajshakeel.rrs.persistence.JpaReservationTransactionManager;
 
 public class ReservationServiceIT {
 
@@ -54,7 +54,7 @@ public class ReservationServiceIT {
     @Before
     public void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
-        service = new ReservationService(new JpaTransactionManager(entityManagerFactory));
+        service = new ReservationService(new JpaReservationTransactionManager(entityManagerFactory));
     }
 
     @After
