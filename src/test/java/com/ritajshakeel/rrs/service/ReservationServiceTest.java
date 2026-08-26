@@ -97,4 +97,15 @@ public class ReservationServiceTest {
         verify(reservation).cancel();
         verify(repository, never()).save(any());
     }
+    
+    @Test
+    public void testFindReservationsForUserDelegatesToRepository() {
+        User user = new User("Alice");
+        Reservation reservation = mock(Reservation.class);
+        when(repository.findByUser(user)).thenReturn(java.util.List.of(reservation));
+
+        java.util.List<Reservation> result = service.findReservationsForUser(user);
+
+        assertThat(result).containsExactly(reservation);
+    }
 }
