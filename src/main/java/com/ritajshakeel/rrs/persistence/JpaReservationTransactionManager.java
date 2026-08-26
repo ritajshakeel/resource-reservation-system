@@ -1,15 +1,18 @@
 package com.ritajshakeel.rrs.persistence;
 
+import java.util.function.Function;
+
+import com.google.inject.Inject;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
-import com.google.inject.Inject;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 import com.ritajshakeel.rrs.repository.jpa.JpaReservationRepository;
 
 public class JpaReservationTransactionManager implements ReservationTransactionManager {
 
-	private final EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Inject
     public JpaReservationTransactionManager(EntityManagerFactory entityManagerFactory) {
@@ -17,7 +20,7 @@ public class JpaReservationTransactionManager implements ReservationTransactionM
     }
 
     @Override
-    public <T> T doInTransaction(TransactionCode<T> code) {
+    public <T> T doInTransaction(Function<ReservationRepository, T> code) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
