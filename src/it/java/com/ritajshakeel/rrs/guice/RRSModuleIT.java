@@ -22,6 +22,8 @@ import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
 import com.ritajshakeel.rrs.service.ReservationService;
+import com.ritajshakeel.rrs.service.ResourceService;
+import com.ritajshakeel.rrs.service.UserService;
 
 public class RRSModuleIT {
 
@@ -88,5 +90,27 @@ public class RRSModuleIT {
         Reservation found = entityManager.find(Reservation.class, saved.getId());
         assertThat(found).isNotNull();
         assertThat(found.getUser().getName()).isEqualTo("Eve");
+    }
+    
+    @Test
+    public void testGuiceWiredUserServiceRegistersUserEndToEnd() {
+        UserService userService = injector.getInstance(UserService.class);
+
+        User saved = userService.register("Frank");
+
+        User found = entityManager.find(User.class, saved.getId());
+        assertThat(found).isNotNull();
+        assertThat(found.getName()).isEqualTo("Frank");
+    }
+
+    @Test
+    public void testGuiceWiredResourceServiceRegistersResourceEndToEnd() {
+        ResourceService resourceService = injector.getInstance(ResourceService.class);
+
+        Resource saved = resourceService.register("Meeting Room H");
+
+        Resource found = entityManager.find(Resource.class, saved.getId());
+        assertThat(found).isNotNull();
+        assertThat(found.getName()).isEqualTo("Meeting Room H");
     }
 }
