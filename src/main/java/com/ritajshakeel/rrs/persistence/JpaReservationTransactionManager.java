@@ -7,12 +7,12 @@ import com.google.inject.Inject;
 import com.ritajshakeel.rrs.repository.ReservationRepository;
 import com.ritajshakeel.rrs.repository.jpa.JpaReservationRepository;
 
-public class JpaTransactionManager implements TransactionManager {
+public class JpaReservationTransactionManager implements ReservationTransactionManager {
 
 	private final EntityManagerFactory entityManagerFactory;
 
     @Inject
-    public JpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+    public JpaReservationTransactionManager(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
 

@@ -6,14 +6,14 @@ import com.google.inject.Inject;
 import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
-import com.ritajshakeel.rrs.persistence.TransactionManager;
+import com.ritajshakeel.rrs.persistence.ReservationTransactionManager;
 
 public class ReservationService {
 
-    private final TransactionManager transactionManager;
+    private final ReservationTransactionManager transactionManager;
 
     @Inject
-    public ReservationService(TransactionManager transactionManager) {
+    public ReservationService(ReservationTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 

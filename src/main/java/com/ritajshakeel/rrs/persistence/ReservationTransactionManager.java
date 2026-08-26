@@ -1,5 +1,5 @@
 package com.ritajshakeel.rrs.persistence;
 
-public interface TransactionManager {
+public interface ReservationTransactionManager {
     <T> T doInTransaction(TransactionCode<T> code);
 }

@@ -36,7 +36,9 @@ public class RRSModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(TransactionManager.class).to(JpaTransactionManager.class);
+        bind(ReservationTransactionManager.class).to(JpaReservationTransactionManager.class);
+        bind(UserTransactionManager.class).to(JpaUserTransactionManager.class);
+        bind(ResourceTransactionManager.class).to(JpaResourceTransactionManager.class);
     }
 
     @Provides
