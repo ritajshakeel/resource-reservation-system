@@ -1,6 +1,7 @@
 package com.ritajshakeel.rrs.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.ritajshakeel.rrs.domain.Reservation;
@@ -40,5 +41,9 @@ public class ReservationService {
             reservation.cancel();
             return null;
         });
+    }
+    
+    public List<Reservation> findReservationsForUser(User user) {
+        return transactionManager.doInTransaction(repository -> repository.findByUser(user));
     }
 }
