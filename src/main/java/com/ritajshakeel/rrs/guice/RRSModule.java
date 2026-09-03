@@ -6,16 +6,20 @@ import java.util.Map;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
-import com.ritajshakeel.rrs.persistence.JpaResourceTransactionManager;
+import com.ritajshakeel.rrs.controller.RRSController;
+import com.ritajshakeel.rrs.controller.RRSControllerFactory;
 import com.ritajshakeel.rrs.persistence.JpaReservationTransactionManager;
 import com.ritajshakeel.rrs.persistence.JpaUserTransactionManager;
 import com.ritajshakeel.rrs.persistence.ResourceTransactionManager;
 import com.ritajshakeel.rrs.persistence.ReservationTransactionManager;
 import com.ritajshakeel.rrs.persistence.UserTransactionManager;
+import com.ritajshakeel.rrs.persistence.JpaResourceTransactionManager;
+import com.ritajshakeel.rrs.view.swing.RRSSwingView;
 
 public class RRSModule extends AbstractModule {
 
@@ -43,6 +47,9 @@ public class RRSModule extends AbstractModule {
         bind(ReservationTransactionManager.class).to(JpaReservationTransactionManager.class);
         bind(UserTransactionManager.class).to(JpaUserTransactionManager.class);
         bind(ResourceTransactionManager.class).to(JpaResourceTransactionManager.class);
+        install(new FactoryModuleBuilder()
+                .implement(RRSController.class, RRSController.class)
+                .build(RRSControllerFactory.class));
     }
 
     @Provides
@@ -55,5 +62,13 @@ public class RRSModule extends AbstractModule {
         overrides.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 
         return Persistence.createEntityManagerFactory("rrs", overrides);
+    }
+
+    @Provides
+    @Singleton
+    RRSSwingView rrsSwingView(RRSControllerFactory controllerFactory) {
+        RRSSwingView view = new RRSSwingView();
+        view.setController(controllerFactory.create(view));
+        return view;
     }
 }
