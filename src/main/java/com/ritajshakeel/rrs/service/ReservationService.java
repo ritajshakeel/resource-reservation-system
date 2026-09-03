@@ -27,19 +27,19 @@ public class ReservationService {
         });
     }
     
-    public void confirmReservation(Long reservationId) {
-        transactionManager.doInTransaction(repository -> {
+    public Reservation confirmReservation(Long reservationId) {
+        return transactionManager.doInTransaction(repository -> {
             Reservation reservation = repository.findById(reservationId);
             reservation.confirm();
-            return null;
+            return reservation;
         });
     }
 
-    public void cancelReservation(Long reservationId) {
-        transactionManager.doInTransaction(repository -> {
+    public Reservation cancelReservation(Long reservationId) {
+        return transactionManager.doInTransaction(repository -> {
             Reservation reservation = repository.findById(reservationId);
             reservation.cancel();
-            return null;
+            return reservation;
         });
     }
     

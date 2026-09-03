@@ -1,0 +1,67 @@
+package com.ritajshakeel.rrs.controller;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
+import com.ritajshakeel.rrs.domain.Reservation;
+import com.ritajshakeel.rrs.domain.Resource;
+import com.ritajshakeel.rrs.domain.User;
+import com.ritajshakeel.rrs.service.OverlappingReservationException;
+import com.ritajshakeel.rrs.service.ReservationService;
+import com.ritajshakeel.rrs.service.ResourceService;
+import com.ritajshakeel.rrs.service.UserService;
+import com.ritajshakeel.rrs.view.RRSView;
+
+public class RRSController {
+
+    private final RRSView view;
+    private final UserService userService;
+    private final ResourceService resourceService;
+    private final ReservationService reservationService;
+
+    @Inject
+    public RRSController(@Assisted RRSView view, UserService userService,
+            ResourceService resourceService, ReservationService reservationService) {
+        this.view = view;
+        this.userService = userService;
+        this.resourceService = resourceService;
+        this.reservationService = reservationService;
+    }
+
+    public void registerUser(String name) {
+        User user = userService.register(name);
+        view.userRegistered(user);
+    }
+
+    public void bookReservation(User user, Resource resource, LocalDateTime start, LocalDateTime end) {
+        try {
+            Reservation reservation = reservationService.book(user, resource, start, end);
+            view.reservationBooked(reservation);
+        } catch (OverlappingReservationException e) {
+            view.showError(e.getMessage());
+        }
+    }
+    
+    public void registerResource(String name) {
+        Resource resource = resourceService.register(name);
+        view.resourceRegistered(resource);
+    }
+
+    public void confirmReservation(Long reservationId) {
+        Reservation reservation = reservationService.confirmReservation(reservationId);
+        view.reservationConfirmed(reservation);
+    }
+
+    public void cancelReservation(Long reservationId) {
+        Reservation reservation = reservationService.cancelReservation(reservationId);
+        view.reservationCancelled(reservation);
+    }
+
+    public void findReservationsForUser(User user) {
+        List<Reservation> reservations = reservationService.findReservationsForUser(user);
+        view.reservationsListed(reservations);
+    }
+}
