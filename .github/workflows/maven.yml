@@ -38,7 +38,7 @@ jobs:
 
     - name: Build with Maven, Coveralls and SonarCloud
       run: >
-        mvn clean verify -Pjacoco coveralls:report $SONARGOAL
+        xvfb-run mvn clean verify -Pjacoco coveralls:report $SONARGOAL
         -Dsonar.organization=ritajshakeel
         -Dsonar.host.url=https://sonarcloud.io
         -Dsonar.projectKey=ritajshakeel_resource-reservation-system
