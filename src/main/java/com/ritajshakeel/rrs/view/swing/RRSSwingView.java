@@ -1,7 +1,6 @@
 package com.ritajshakeel.rrs.view.swing;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -15,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.WindowConstants;
 
 import com.ritajshakeel.rrs.controller.RRSController;
 import com.ritajshakeel.rrs.domain.Reservation;
@@ -26,14 +26,14 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     private static final long serialVersionUID = 1L;
 
-    private RRSController controller;
+    private transient RRSController controller;
     private JTextField nameTextField;
     private JButton registerButton;
     private JLabel errorLabel;
     private JComboBox<User> actingAsComboBox;
 
     public RRSSwingView() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 600, 400);
         setResizable(false);
 
