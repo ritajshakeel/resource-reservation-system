@@ -31,6 +31,6 @@ public class UserTest {
     public void testToStringReturnsName() {
         User user = new User("Alice");
 
-        assertThat(user.toString()).isEqualTo("Alice");
+        assertThat(user).hasToString("Alice");
     }
 }
