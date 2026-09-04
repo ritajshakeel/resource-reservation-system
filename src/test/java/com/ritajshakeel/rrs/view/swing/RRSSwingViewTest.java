@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
+
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
@@ -80,5 +82,20 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
 
         window.comboBox("actingAsComboBox").requireItemCount(1);
+    }
+    
+    @Test
+    public void testShowErrorSetsErrorLabelText() {
+        GuiActionRunner.execute(() -> rrsSwingView.showError("Something went wrong"));
+
+        window.label("errorLabel").requireText("Something went wrong");
+    }
+
+    @Test
+    public void testUsersListedPopulatesActingAsComboBox() {
+        GuiActionRunner.execute(() -> rrsSwingView.usersListed(
+            List.of(new User("Alice"), new User("Bob"))));
+
+        window.comboBox("actingAsComboBox").requireItemCount(2);
     }
 }
