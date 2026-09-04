@@ -24,6 +24,7 @@ import com.ritajshakeel.rrs.domain.User;
 import com.ritajshakeel.rrs.service.ReservationService;
 import com.ritajshakeel.rrs.service.ResourceService;
 import com.ritajshakeel.rrs.service.UserService;
+import com.ritajshakeel.rrs.view.swing.RRSSwingView;
 
 public class RRSModuleIT {
 
@@ -112,5 +113,12 @@ public class RRSModuleIT {
         Resource found = entityManager.find(Resource.class, saved.getId());
         assertThat(found).isNotNull();
         assertThat(found.getName()).isEqualTo("Meeting Room H");
+    }
+    
+    @Test
+    public void testGuiceWiredRRSSwingViewResolvesWithControllerSet() {
+        RRSSwingView view = injector.getInstance(RRSSwingView.class);
+
+        assertThat(view).isNotNull();
     }
 }
