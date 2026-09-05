@@ -14,7 +14,7 @@
     <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
     <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S2699</sonar.issue.ignore.multicriteria.e1.ruleKey>
     <sonar.issue.ignore.multicriteria.e1.resourceKey>**/RRSSwingViewTest.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
-    <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S106</sonar.issue.ignore.multicriteria.e2.ruleKey>
+    <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S4507</sonar.issue.ignore.multicriteria.e2.ruleKey>
     <sonar.issue.ignore.multicriteria.e2.resourceKey>**/Main.java</sonar.issue.ignore.multicriteria.e2.resourceKey>
     
     <sonar.coverage.exclusions>**/Main.*</sonar.coverage.exclusions>
