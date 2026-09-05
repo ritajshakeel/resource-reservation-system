@@ -1,6 +1,8 @@
 package com.ritajshakeel.rrs.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -17,6 +19,7 @@ import org.junit.runner.RunWith;
 import javax.swing.JTabbedPane;
 
 import com.ritajshakeel.rrs.controller.RRSController;
+import com.ritajshakeel.rrs.domain.Reservation;
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
 
@@ -123,5 +126,45 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.label("resourceErrorLabel").requireText(" ");
         window.tabbedPane("tabbedPane").selectTab("Book");
         window.comboBox("resourceComboBox").requireItemCount(1);
+    }
+    
+    @Test
+    public void testBookButtonDisabledUntilResourceSelected() {
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        window.button("bookButton").requireDisabled();
+    }
+
+    @Test
+    public void testBookButtonEnabledOnceResourceSelected() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        window.comboBox("resourceComboBox").selectItem(0);
+
+        window.button("bookButton").requireEnabled();
+    }
+
+    @Test
+    public void testClickingBookButtonCallsControllerWithSelectedValues() {
+        Resource resource = new Resource("Meeting Room A");
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(resource));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+
+        window.button("bookButton").click();
+
+        verify(controller).bookReservation(eq(null), eq(resource), any(), any());
+    }
+
+    @Test
+    public void testReservationBookedClearsSpinnersAndError() {
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        GuiActionRunner.execute(() -> rrsSwingView.reservationBooked(mock(Reservation.class)));
+
+        window.label("bookErrorLabel").requireText(" ");
     }
 }
