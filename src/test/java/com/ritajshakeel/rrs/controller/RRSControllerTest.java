@@ -1,6 +1,8 @@
 package com.ritajshakeel.rrs.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +73,7 @@ public class RRSControllerTest {
 
         controller.bookReservation(user, resource, start, end);
 
-        verify(view).showError(org.mockito.ArgumentMatchers.anyString());
+        verify(view).showBookingError(org.mockito.ArgumentMatchers.anyString());
     }
     
     @Test
@@ -124,5 +126,86 @@ public class RRSControllerTest {
         controller.loadResources();
 
         verify(view).resourcesListed(List.of(roomA, roomB));
+    }
+    
+    @Test
+    public void testOnActingAsUserSelectedLoadsReservationsWhenUserPresent() {
+        User user = new User("Alice");
+        Reservation reservation = mock(Reservation.class);
+        when(reservationService.findReservationsForUser(user)).thenReturn(List.of(reservation));
+
+        controller.onActingAsUserSelected(user);
+
+        verify(view).reservationsListed(List.of(reservation));
+    }
+
+    @Test
+    public void testOnActingAsUserSelectedDoesNothingWhenUserIsNull() {
+        controller.onActingAsUserSelected(null);
+
+        verify(view, never()).reservationsListed(any());
+    }
+    
+    @Test
+    public void testRegisterUserWithInvalidNameShowsRegistrationError() {
+        when(userService.register("")).thenThrow(new IllegalArgumentException("Name must not be empty"));
+
+        controller.registerUser("");
+
+        verify(view).showRegistrationError("Name must not be empty");
+    }
+
+    @Test
+    public void testRegisterResourceWithInvalidNameShowsRegistrationError() {
+        when(resourceService.register("")).thenThrow(new IllegalArgumentException("Name must not be empty"));
+
+        controller.registerResource("");
+
+        verify(view).showResourceRegistrationError("Name must not be empty");
+    }
+    
+    @Test
+    public void testConfirmReservationWithInvalidTransitionShowsError() {
+        when(reservationService.confirmReservation(5L))
+            .thenThrow(new IllegalStateException("Cannot confirm a cancelled reservation"));
+
+        controller.confirmReservation(5L);
+
+        verify(view).showReservationActionError("Cannot confirm a cancelled reservation");
+    }
+
+    @Test
+    public void testCancelReservationWithInvalidTransitionShowsError() {
+        when(reservationService.cancelReservation(5L))
+            .thenThrow(new IllegalStateException("Cannot cancel a cancelled reservation"));
+
+        controller.cancelReservation(5L);
+
+        verify(view).showReservationActionError("Cannot cancel a cancelled reservation");
+    }
+    
+    @Test
+    public void testBookReservationWithEndBeforeStartShowsError() {
+        User user = new User("Alice");
+        Resource resource = new Resource("Meeting Room A");
+        LocalDateTime start = LocalDateTime.of(2026, 7, 12, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 7, 12, 9, 0);
+        when(reservationService.book(user, resource, start, end))
+            .thenThrow(new IllegalArgumentException("End time must be after start time"));
+
+        controller.bookReservation(user, resource, start, end);
+
+        verify(view).showBookingError("End time must be after start time");
+    }
+    
+    @Test
+    public void testLoadUsersFetchesAndNotifiesView() {
+        User alice = new User("Alice");
+        User bob = new User("Bob");
+        when(userService.listAll()).thenReturn(List.of(alice, bob));
+
+        controller.loadUsers();
+
+        verify(view).usersListed(List.of(alice, bob));
     }
 }

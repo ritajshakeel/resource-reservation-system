@@ -1,6 +1,7 @@
 package com.ritajshakeel.rrs.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Reservation {
+	
+	private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,5 +96,10 @@ public class Reservation {
             throw new IllegalStateException("Cannot cancel a cancelled reservation");
         }
         this.status = ReservationStatus.CANCELLED;
+    }
+    
+    @Override
+    public String toString() {
+        return resource + ": " + start.format(DISPLAY_FORMAT) + " - " + end.format(DISPLAY_FORMAT) + " (" + status + ")";
     }
 }

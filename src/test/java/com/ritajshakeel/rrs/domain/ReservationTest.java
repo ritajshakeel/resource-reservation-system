@@ -116,5 +116,14 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot cancel a cancelled reservation");
 	}
+	
+	@Test
+	public void testToStringReturnsResourceAndTimeRangeAndStatus() {
+	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
+	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
+	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 
+	    assertThat(reservation.toString())
+	        .isEqualTo("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
+	}
 }

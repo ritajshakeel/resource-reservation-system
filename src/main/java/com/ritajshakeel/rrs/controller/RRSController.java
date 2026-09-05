@@ -32,32 +32,48 @@ public class RRSController {
     }
 
     public void registerUser(String name) {
-        User user = userService.register(name);
-        view.userRegistered(user);
+        try {
+            User user = userService.register(name);
+            view.userRegistered(user);
+        } catch (IllegalArgumentException e) {
+            view.showRegistrationError(e.getMessage());
+        }
     }
 
     public void bookReservation(User user, Resource resource, LocalDateTime start, LocalDateTime end) {
         try {
             Reservation reservation = reservationService.book(user, resource, start, end);
             view.reservationBooked(reservation);
-        } catch (OverlappingReservationException e) {
-            view.showError(e.getMessage());
+        } catch (OverlappingReservationException | IllegalArgumentException e) {
+            view.showBookingError(e.getMessage());
         }
     }
     
     public void registerResource(String name) {
-        Resource resource = resourceService.register(name);
-        view.resourceRegistered(resource);
+        try {
+            Resource resource = resourceService.register(name);
+            view.resourceRegistered(resource);
+        } catch (IllegalArgumentException e) {
+            view.showResourceRegistrationError(e.getMessage());
+        }
     }
 
     public void confirmReservation(Long reservationId) {
-        Reservation reservation = reservationService.confirmReservation(reservationId);
-        view.reservationConfirmed(reservation);
+        try {
+            Reservation reservation = reservationService.confirmReservation(reservationId);
+            view.reservationConfirmed(reservation);
+        } catch (IllegalStateException e) {
+            view.showReservationActionError(e.getMessage());
+        }
     }
 
     public void cancelReservation(Long reservationId) {
-        Reservation reservation = reservationService.cancelReservation(reservationId);
-        view.reservationCancelled(reservation);
+        try {
+            Reservation reservation = reservationService.cancelReservation(reservationId);
+            view.reservationCancelled(reservation);
+        } catch (IllegalStateException e) {
+            view.showReservationActionError(e.getMessage());
+        }
     }
 
     public void findReservationsForUser(User user) {
@@ -68,5 +84,16 @@ public class RRSController {
     public void loadResources() {
         List<Resource> resources = resourceService.listAll();
         view.resourcesListed(resources);
+    }
+    
+    public void onActingAsUserSelected(User user) {
+        if (user != null) {
+            findReservationsForUser(user);
+        }
+    }
+    
+    public void loadUsers() {
+        List<User> users = userService.listAll();
+        view.usersListed(users);
     }
 }

@@ -15,5 +15,8 @@ public interface RRSView {
     void reservationsListed(List<Reservation> reservations);
     void reservationConfirmed(Reservation reservation);
     void reservationCancelled(Reservation reservation);
-    void showError(String message);
+    void showBookingError(String message);
+    void showRegistrationError(String message);
+    void showResourceRegistrationError(String message);
+	void showReservationActionError(String message);
 }

@@ -15,6 +15,7 @@ public class Main {
                     .getInstance(RRSSwingView.class);
                 view.setVisible(true);
                 view.getController().loadResources();
+                view.getController().loadUsers();
             } catch (Exception e) {
                 e.printStackTrace();
             }
