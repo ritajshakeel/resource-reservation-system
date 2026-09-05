@@ -54,11 +54,14 @@ public class RRSSwingView extends JFrame implements RRSView {
     
     private DefaultListModel<Reservation> reservationsListModel;
     private JList<Reservation> reservationsList;
+    
+    private JLabel reservationsErrorLabel;
+    private JButton confirmReservationButton;
+    private JButton cancelReservationButton;
 
     public RRSSwingView() {
     	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 600, 400);
-        setResizable(false);
+        setBounds(100, 100, 1000, 600);
 
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -180,6 +183,7 @@ public class RRSSwingView extends JFrame implements RRSView {
             controller.bookReservation(user, resource, start, end);
         });
         panel.add(bookButton);
+        resetDateSpinners();
 
         bookErrorLabel = new JLabel(" ");
         bookErrorLabel.setName("bookErrorLabel");
@@ -195,7 +199,31 @@ public class RRSSwingView extends JFrame implements RRSView {
         reservationsList = new JList<>(reservationsListModel);
         reservationsList.setName("reservationsList");
 
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        confirmReservationButton = new JButton("Confirm");
+        confirmReservationButton.setName("confirmReservationButton");
+        confirmReservationButton.setEnabled(false);
+        confirmReservationButton.addActionListener(e -> controller.confirmReservation(reservationsList.getSelectedValue().getId()));
+        buttonPanel.add(confirmReservationButton);
+
+        cancelReservationButton = new JButton("Cancel");
+        cancelReservationButton.setName("cancelReservationButton");
+        cancelReservationButton.setEnabled(false);
+        cancelReservationButton.addActionListener(e -> controller.cancelReservation(reservationsList.getSelectedValue().getId()));
+        buttonPanel.add(cancelReservationButton);
+        
+        reservationsErrorLabel = new JLabel(" ");
+        reservationsErrorLabel.setName("reservationsErrorLabel");
+        buttonPanel.add(reservationsErrorLabel);
+
+        reservationsList.addListSelectionListener(e -> {
+            boolean hasSelection = reservationsList.getSelectedValue() != null;
+            confirmReservationButton.setEnabled(hasSelection);
+            cancelReservationButton.setEnabled(hasSelection);
+        });
+
         panel.add(new JScrollPane(reservationsList), BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
     }
 
@@ -207,6 +235,13 @@ public class RRSSwingView extends JFrame implements RRSView {
         boolean hasResource = resourceComboBox.getSelectedItem() != null;
         boolean hasUser = actingAsComboBox.getSelectedItem() != null;
         bookButton.setEnabled(hasResource && hasUser);
+    }
+    
+    private void resetDateSpinners() {
+        Date now = new Date();
+        Date oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+        startDateSpinner.setValue(now);
+        endDateSpinner.setValue(oneHourLater);
     }
 
     public void setController(RRSController controller) {
@@ -220,13 +255,13 @@ public class RRSSwingView extends JFrame implements RRSView {
     @Override
     public void userRegistered(User user) {
         nameTextField.setText("");
-        errorLabel.setText(" ");
+        errorLabel.setText("Registered \"" + user.getName() + "\".");
         actingAsComboBox.addItem(user);
     }
 
     @Override
-    public void showError(String message) {
-        errorLabel.setText(message);
+    public void showBookingError(String message) {
+    	bookErrorLabel.setText(message);
     }
 
     @Override
@@ -241,9 +276,9 @@ public class RRSSwingView extends JFrame implements RRSView {
     public void resourceRegistered(Resource resource) {
         resourcesListModel.addElement(resource);
         resourceComboBox.addItem(resource);
-        resourceErrorLabel.setText(" ");
+        resourceErrorLabel.setText("Registered \"" + resource.getName() + "\".");
     }
-
+    
     @Override
     public void resourcesListed(List<Resource> resources) {
         resourcesListModel.clear();
@@ -256,9 +291,8 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     @Override
     public void reservationBooked(Reservation reservation) {
-        startDateSpinner.setValue(new Date());
-        endDateSpinner.setValue(new Date());
-        bookErrorLabel.setText(" ");
+        resetDateSpinners();
+        bookErrorLabel.setText("Booked " + reservation + ".");
     }
 
     @Override
@@ -271,11 +305,29 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     @Override
     public void reservationConfirmed(Reservation reservation) {
-        // to implement
+        reservationsErrorLabel.setText("Confirmed " + reservation + ".");
+        controller.onActingAsUserSelected((User) actingAsComboBox.getSelectedItem());
     }
 
     @Override
     public void reservationCancelled(Reservation reservation) {
-        // to implement
+        reservationsErrorLabel.setText("Cancelled " + reservation + ".");
+        controller.onActingAsUserSelected((User) actingAsComboBox.getSelectedItem());
     }
+    
+    @Override
+    public void showRegistrationError(String message) {
+        errorLabel.setText(message);
+    }
+
+    @Override
+    public void showResourceRegistrationError(String message) {
+        resourceErrorLabel.setText(message);
+    }
+
+	@Override
+	public void showReservationActionError(String message) {
+		reservationsErrorLabel.setText(message);
+		
+	}
 }
