@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
-import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -195,5 +194,31 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.comboBox("actingAsComboBox").selectItem(0);
 
         window.button("bookButton").requireEnabled();
+    }
+    
+    @Test
+    public void testRegisterButtonDisabledAgainWhenNameIsCleared() {
+        window.textBox("nameTextField").enterText("Alice");
+        window.textBox("nameTextField").deleteText();
+
+        window.button("registerUserButton").requireDisabled();
+    }
+
+    @Test
+    public void testRegisterResourceButtonDisabledAgainWhenNameIsCleared() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+        window.textBox("resourceNameTextField").deleteText();
+
+        window.button("registerResourceButton").requireDisabled();
+    }
+    
+    @Test
+    public void testClickingRegisterResourceButtonCallsControllerWithEnteredName() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+        window.button("registerResourceButton").click();
+
+        verify(controller).registerResource("Meeting Room A");
     }
 }
