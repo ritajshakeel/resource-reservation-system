@@ -102,13 +102,14 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     
     @Test
     public void testResourcesListedPopulatesListAndComboBox() {
-    	window.tabbedPane("tabbedPane").selectTab("Resources");
+        window.tabbedPane("tabbedPane").selectTab("Resources");
         Resource roomA = new Resource("Meeting Room A");
         Resource roomB = new Resource("Meeting Room B");
 
         GuiActionRunner.execute(() -> rrsSwingView.resourcesListed(List.of(roomA, roomB)));
 
         assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room A", "Meeting Room B");
+        window.tabbedPane("tabbedPane").selectTab("Book");
         window.comboBox("resourceComboBox").requireItemCount(2);
     }
 
@@ -119,7 +120,8 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room C")));
 
         assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room C");
-        window.comboBox("resourceComboBox").requireItemCount(1);
         window.label("resourceErrorLabel").requireText(" ");
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").requireItemCount(1);
     }
 }

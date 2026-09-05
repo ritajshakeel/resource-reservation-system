@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -14,10 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.WindowConstants;
+import java.time.ZoneId;
+import java.util.Date;
+import javax.swing.SpinnerDateModel;
 
 import com.ritajshakeel.rrs.controller.RRSController;
 import com.ritajshakeel.rrs.domain.Reservation;
@@ -41,7 +46,11 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JLabel resourceErrorLabel;
     private DefaultListModel<Resource> resourcesListModel;
     private JList<Resource> resourcesList;
-
+    
+    private JSpinner startDateSpinner;
+    private JSpinner endDateSpinner;
+    private JButton bookButton;
+    private JLabel bookErrorLabel;
 
     public RRSSwingView() {
     	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -66,7 +75,7 @@ public class RRSSwingView extends JFrame implements RRSView {
 
         tabbedPane.addTab("Register", buildRegisterPanel());
         tabbedPane.addTab("Resources", buildResourcePanel());
-        tabbedPane.addTab("Book", new JPanel());
+        tabbedPane.addTab("Book", buildBookPanel());
         tabbedPane.addTab("My Reservations", new JPanel());
     }
 
@@ -123,10 +132,6 @@ public class RRSSwingView extends JFrame implements RRSView {
             }
         });
 
-//        resourceComboBox = new JComboBox<>();
-//        resourceComboBox.setName("resourceComboBox");
-//        formPanel.add(resourceComboBox);
-
         resourcesListModel = new DefaultListModel<>();
         resourcesList = new JList<>(resourcesListModel);
         resourcesList.setName("resourcesList");
@@ -135,7 +140,54 @@ public class RRSSwingView extends JFrame implements RRSView {
         panel.add(new JScrollPane(resourcesList), BorderLayout.CENTER);
         return panel;
     }
+    
+    private JPanel buildBookPanel() {
+        JPanel panel = new JPanel(new FlowLayout());
 
+        panel.add(new JLabel("Resource:"));
+        resourceComboBox = new JComboBox<>();
+        resourceComboBox.setName("resourceComboBox");
+        resourceComboBox.addActionListener(e -> updateBookButtonState());
+        panel.add(resourceComboBox);
+
+        panel.add(new JLabel("Start:"));
+        startDateSpinner = new JSpinner(new SpinnerDateModel());
+        startDateSpinner.setName("startDateSpinner");
+        startDateSpinner.setEditor(new JSpinner.DateEditor(startDateSpinner, "yyyy-MM-dd HH:mm"));
+        panel.add(startDateSpinner);
+
+        panel.add(new JLabel("End:"));
+        endDateSpinner = new JSpinner(new SpinnerDateModel());
+        endDateSpinner.setName("endDateSpinner");
+        endDateSpinner.setEditor(new JSpinner.DateEditor(endDateSpinner, "yyyy-MM-dd HH:mm"));
+        panel.add(endDateSpinner);
+
+        bookButton = new JButton("Book");
+        bookButton.setName("bookButton");
+        bookButton.setEnabled(false);
+        bookButton.addActionListener(e -> {
+            LocalDateTime start = toLocalDateTime((Date) startDateSpinner.getValue());
+            LocalDateTime end = toLocalDateTime((Date) endDateSpinner.getValue());
+            User user = (User) actingAsComboBox.getSelectedItem();
+            Resource resource = (Resource) resourceComboBox.getSelectedItem();
+            controller.bookReservation(user, resource, start, end);
+        });
+        panel.add(bookButton);
+
+        bookErrorLabel = new JLabel(" ");
+        bookErrorLabel.setName("bookErrorLabel");
+        panel.add(bookErrorLabel);
+
+        return panel;
+    }
+
+    private LocalDateTime toLocalDateTime(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    private void updateBookButtonState() {
+        bookButton.setEnabled(resourceComboBox.getSelectedItem() != null);
+    }
 
     public void setController(RRSController controller) {
         this.controller = controller;
@@ -184,7 +236,9 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     @Override
     public void reservationBooked(Reservation reservation) {
-        // to implement
+        startDateSpinner.setValue(new Date());
+        endDateSpinner.setValue(new Date());
+        bookErrorLabel.setText(" ");
     }
 
     @Override
