@@ -26,4 +26,11 @@ public class UserTest {
 
         assertThat(user.getName()).isEqualTo("Alice");
     }
+    
+    @Test
+    public void testToStringReturnsName() {
+        User user = new User("Alice");
+
+        assertThat(user).hasToString("Alice");
+    }
 }

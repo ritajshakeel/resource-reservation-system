@@ -64,4 +64,9 @@ public class RRSController {
         List<Reservation> reservations = reservationService.findReservationsForUser(user);
         view.reservationsListed(reservations);
     }
+    
+    public void loadResources() {
+        List<Resource> resources = resourceService.listAll();
+        view.resourcesListed(resources);
+    }
 }

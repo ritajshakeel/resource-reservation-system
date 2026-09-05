@@ -10,6 +10,14 @@
     <maven.compiler.target>21</maven.compiler.target>
     <testcontainers.version>1.21.4</testcontainers.version>
     <sonar.organization>ritajshakeel</sonar.organization>
+    
+    <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S2699</sonar.issue.ignore.multicriteria.e1.ruleKey>
+    <sonar.issue.ignore.multicriteria.e1.resourceKey>**/RRSSwingViewTest.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
+    <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S4507</sonar.issue.ignore.multicriteria.e2.ruleKey>
+    <sonar.issue.ignore.multicriteria.e2.resourceKey>**/Main.java</sonar.issue.ignore.multicriteria.e2.resourceKey>
+    
+    <sonar.coverage.exclusions>**/Main.*</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -28,6 +36,13 @@
       <version>3.27.7</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-swing-junit</artifactId>
+      <version>3.17.1</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testcontainers</groupId>
@@ -41,6 +56,12 @@
       <artifactId>postgresql</artifactId>
       <version>${testcontainers.version}</version>
       <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.2.0</version>
     </dependency>
 
     <!-- Source: https://mvnrepository.com/artifact/org.postgresql/postgresql -->
@@ -98,6 +119,11 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.12</version>
+          <configuration>
+            <excludes>
+              <exclude>**/Main.*</exclude>
+            </excludes>
+          </configuration>
           <executions>
             <execution>
               <goals>
