@@ -1,12 +1,13 @@
 package com.ritajshakeel.rrs.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
-import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -17,6 +18,8 @@ import org.junit.runner.RunWith;
 import javax.swing.JTabbedPane;
 
 import com.ritajshakeel.rrs.controller.RRSController;
+import com.ritajshakeel.rrs.domain.Reservation;
+import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
 
 @RunWith(GUITestRunner.class)
@@ -41,20 +44,20 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test
     public void testInitialControlStates() {
         window.textBox("nameTextField").requireEnabled();
-        window.button(JButtonMatcher.withText("Register")).requireDisabled();
+        window.button("registerUserButton").requireDisabled();
     }
 
     @Test
     public void testRegisterButtonIsEnabledWhenNameIsEntered() {
         window.textBox("nameTextField").enterText("Alice");
 
-        window.button(JButtonMatcher.withText("Register")).requireEnabled();
+        window.button("registerUserButton").requireEnabled();
     }
 
     @Test
     public void testClickingRegisterButtonCallsControllerWithEnteredName() {
         window.textBox("nameTextField").enterText("Alice");
-        window.button(JButtonMatcher.withText("Register")).click();
+        window.button("registerUserButton").click();
 
         verify(controller).registerUser("Alice");
     }
@@ -77,7 +80,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test
     public void testRegisteringUserAddsThemToActingAsComboBox() {
         window.textBox("nameTextField").enterText("Alice");
-        window.button(JButtonMatcher.withText("Register")).click();
+        window.button("registerUserButton").click();
 
         GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
 
@@ -97,5 +100,125 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
             List.of(new User("Alice"), new User("Bob"))));
 
         window.comboBox("actingAsComboBox").requireItemCount(2);
+    }
+    
+    @Test
+    public void testResourcesListedPopulatesListAndComboBox() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        Resource roomA = new Resource("Meeting Room A");
+        Resource roomB = new Resource("Meeting Room B");
+
+        GuiActionRunner.execute(() -> rrsSwingView.resourcesListed(List.of(roomA, roomB)));
+
+        assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room A", "Meeting Room B");
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").requireItemCount(2);
+    }
+
+    @Test
+    public void testResourceRegisteredUpdatesListComboBoxAndResetsError() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room C")));
+
+        assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room C");
+        window.label("resourceErrorLabel").requireText(" ");
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").requireItemCount(1);
+    }
+    
+    @Test
+    public void testBookButtonDisabledUntilResourceSelected() {
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        window.button("bookButton").requireDisabled();
+    }
+
+    @Test
+    public void testClickingBookButtonCallsControllerWithSelectedValues() {
+        Resource resource = new Resource("Meeting Room A");
+        User user = new User("Alice");
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(resource));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(user));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        window.button("bookButton").click();
+
+        verify(controller).bookReservation(eq(user), eq(resource), any(), any());
+    }
+
+    @Test
+    public void testReservationBookedClearsSpinnersAndError() {
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        GuiActionRunner.execute(() -> rrsSwingView.reservationBooked(mock(Reservation.class)));
+
+        window.label("bookErrorLabel").requireText(" ");
+    }
+    
+    @Test
+    public void testRegisterResourceButtonIsEnabledWhenNameIsEntered() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+
+        window.button("registerResourceButton").requireEnabled();
+    }
+    
+    @Test
+    public void testGetControllerReturnsSetController() {
+        assertThat(rrsSwingView.getController()).isSameAs(controller);
+    }
+    
+    @Test
+    public void testBookButtonStaysDisabledWithResourceButNoUser() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        window.comboBox("resourceComboBox").selectItem(0);
+
+        window.button("bookButton").requireDisabled();
+    }
+
+    @Test
+    public void testBookButtonEnabledWithBothResourceAndUserSelected() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        window.button("bookButton").requireEnabled();
+    }
+    
+    @Test
+    public void testRegisterButtonDisabledAgainWhenNameIsCleared() {
+        window.textBox("nameTextField").enterText("Alice");
+        window.textBox("nameTextField").deleteText();
+
+        window.button("registerUserButton").requireDisabled();
+    }
+
+    @Test
+    public void testRegisterResourceButtonDisabledAgainWhenNameIsCleared() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+        window.textBox("resourceNameTextField").deleteText();
+
+        window.button("registerResourceButton").requireDisabled();
+    }
+    
+    @Test
+    public void testClickingRegisterResourceButtonCallsControllerWithEnteredName() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+        window.button("registerResourceButton").click();
+
+        verify(controller).registerResource("Meeting Room A");
     }
 }
