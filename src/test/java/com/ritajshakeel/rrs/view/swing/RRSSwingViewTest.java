@@ -136,27 +136,19 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test
-    public void testBookButtonEnabledOnceResourceSelected() {
-        window.tabbedPane("tabbedPane").selectTab("Resources");
-        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
-        window.tabbedPane("tabbedPane").selectTab("Book");
-
-        window.comboBox("resourceComboBox").selectItem(0);
-
-        window.button("bookButton").requireEnabled();
-    }
-
-    @Test
     public void testClickingBookButtonCallsControllerWithSelectedValues() {
         Resource resource = new Resource("Meeting Room A");
+        User user = new User("Alice");
         window.tabbedPane("tabbedPane").selectTab("Resources");
         GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(resource));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(user));
         window.tabbedPane("tabbedPane").selectTab("Book");
         window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
 
         window.button("bookButton").click();
 
-        verify(controller).bookReservation(eq(null), eq(resource), any(), any());
+        verify(controller).bookReservation(eq(user), eq(resource), any(), any());
     }
 
     @Test
@@ -166,5 +158,42 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() -> rrsSwingView.reservationBooked(mock(Reservation.class)));
 
         window.label("bookErrorLabel").requireText(" ");
+    }
+    
+    @Test
+    public void testRegisterResourceButtonIsEnabledWhenNameIsEntered() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+
+        window.textBox("resourceNameTextField").enterText("Meeting Room A");
+
+        window.button("registerResourceButton").requireEnabled();
+    }
+    
+    @Test
+    public void testGetControllerReturnsSetController() {
+        assertThat(rrsSwingView.getController()).isSameAs(controller);
+    }
+    
+    @Test
+    public void testBookButtonStaysDisabledWithResourceButNoUser() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+
+        window.comboBox("resourceComboBox").selectItem(0);
+
+        window.button("bookButton").requireDisabled();
+    }
+
+    @Test
+    public void testBookButtonEnabledWithBothResourceAndUserSelected() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        window.button("bookButton").requireEnabled();
     }
 }

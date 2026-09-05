@@ -66,6 +66,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         actingAsPanel.add(new JLabel("Acting as:"));
         actingAsComboBox = new JComboBox<>();
         actingAsComboBox.setName("actingAsComboBox");
+        actingAsComboBox.addActionListener(e -> updateBookButtonState());
         actingAsPanel.add(actingAsComboBox);
         contentPane.add(actingAsPanel, BorderLayout.NORTH);
 
@@ -186,7 +187,9 @@ public class RRSSwingView extends JFrame implements RRSView {
     }
 
     private void updateBookButtonState() {
-        bookButton.setEnabled(resourceComboBox.getSelectedItem() != null);
+        boolean hasResource = resourceComboBox.getSelectedItem() != null;
+        boolean hasUser = actingAsComboBox.getSelectedItem() != null;
+        bookButton.setEnabled(hasResource && hasUser);
     }
 
     public void setController(RRSController controller) {
