@@ -114,4 +114,15 @@ public class RRSControllerTest {
 
         verify(view).reservationsListed(reservations);
     }
+    
+    @Test
+    public void testLoadResourcesFetchesAndNotifiesView() {
+        Resource roomA = new Resource("Meeting Room A");
+        Resource roomB = new Resource("Meeting Room B");
+        when(resourceService.listAll()).thenReturn(List.of(roomA, roomB));
+
+        controller.loadResources();
+
+        verify(view).resourcesListed(List.of(roomA, roomB));
+    }
 }
