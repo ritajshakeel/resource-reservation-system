@@ -6,11 +6,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -31,6 +34,14 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JButton registerButton;
     private JLabel errorLabel;
     private JComboBox<User> actingAsComboBox;
+    private JComboBox<Resource> resourceComboBox;
+    
+    private JTextField resourceNameTextField;
+    private JButton registerResourceButton;
+    private JLabel resourceErrorLabel;
+    private DefaultListModel<Resource> resourcesListModel;
+    private JList<Resource> resourcesList;
+
 
     public RRSSwingView() {
     	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -54,7 +65,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
         tabbedPane.addTab("Register", buildRegisterPanel());
-        tabbedPane.addTab("Resources", new JPanel());
+        tabbedPane.addTab("Resources", buildResourcePanel());
         tabbedPane.addTab("Book", new JPanel());
         tabbedPane.addTab("My Reservations", new JPanel());
     }
@@ -67,6 +78,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         panel.add(nameTextField);
 
         registerButton = new JButton("Register");
+        registerButton.setName("registerUserButton");
         registerButton.setEnabled(false);
         registerButton.addActionListener(e -> controller.registerUser(nameTextField.getText()));
         panel.add(registerButton);
@@ -84,9 +96,53 @@ public class RRSSwingView extends JFrame implements RRSView {
 
         return panel;
     }
+    
+    private JPanel buildResourcePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JPanel formPanel = new JPanel(new FlowLayout());
+
+        resourceNameTextField = new JTextField(15);
+        resourceNameTextField.setName("resourceNameTextField");
+        formPanel.add(resourceNameTextField);
+
+        registerResourceButton = new JButton("Register");
+        registerResourceButton.setName("registerResourceButton");
+        registerResourceButton.setEnabled(false);
+        registerResourceButton.addActionListener(e -> controller.registerResource(resourceNameTextField.getText()));
+        formPanel.add(registerResourceButton);
+
+        resourceErrorLabel = new JLabel(" ");
+        resourceErrorLabel.setName("resourceErrorLabel");
+        formPanel.add(resourceErrorLabel);
+
+        resourceNameTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                registerResourceButton.setEnabled(!resourceNameTextField.getText().trim().isEmpty());
+            }
+        });
+
+//        resourceComboBox = new JComboBox<>();
+//        resourceComboBox.setName("resourceComboBox");
+//        formPanel.add(resourceComboBox);
+
+        resourcesListModel = new DefaultListModel<>();
+        resourcesList = new JList<>(resourcesListModel);
+        resourcesList.setName("resourcesList");
+
+        panel.add(formPanel, BorderLayout.NORTH);
+        panel.add(new JScrollPane(resourcesList), BorderLayout.CENTER);
+        return panel;
+    }
+
 
     public void setController(RRSController controller) {
         this.controller = controller;
+    }
+    
+    public RRSController getController() {
+        return controller;
     }
 
     @Override
@@ -111,12 +167,19 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     @Override
     public void resourceRegistered(Resource resource) {
-        // to implement
+        resourcesListModel.addElement(resource);
+        resourceComboBox.addItem(resource);
+        resourceErrorLabel.setText(" ");
     }
 
     @Override
     public void resourcesListed(List<Resource> resources) {
-        // to implement
+        resourcesListModel.clear();
+        resourceComboBox.removeAllItems();
+        for (Resource resource : resources) {
+            resourcesListModel.addElement(resource);
+            resourceComboBox.addItem(resource);
+        }
     }
 
     @Override

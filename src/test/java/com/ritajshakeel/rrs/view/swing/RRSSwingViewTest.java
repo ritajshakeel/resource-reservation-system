@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import javax.swing.JTabbedPane;
 
 import com.ritajshakeel.rrs.controller.RRSController;
+import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.domain.User;
 
 @RunWith(GUITestRunner.class)
@@ -41,20 +42,20 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test
     public void testInitialControlStates() {
         window.textBox("nameTextField").requireEnabled();
-        window.button(JButtonMatcher.withText("Register")).requireDisabled();
+        window.button("registerUserButton").requireDisabled();
     }
 
     @Test
     public void testRegisterButtonIsEnabledWhenNameIsEntered() {
         window.textBox("nameTextField").enterText("Alice");
 
-        window.button(JButtonMatcher.withText("Register")).requireEnabled();
+        window.button("registerUserButton").requireEnabled();
     }
 
     @Test
     public void testClickingRegisterButtonCallsControllerWithEnteredName() {
         window.textBox("nameTextField").enterText("Alice");
-        window.button(JButtonMatcher.withText("Register")).click();
+        window.button("registerUserButton").click();
 
         verify(controller).registerUser("Alice");
     }
@@ -77,7 +78,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test
     public void testRegisteringUserAddsThemToActingAsComboBox() {
         window.textBox("nameTextField").enterText("Alice");
-        window.button(JButtonMatcher.withText("Register")).click();
+        window.button("registerUserButton").click();
 
         GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
 
@@ -97,5 +98,28 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
             List.of(new User("Alice"), new User("Bob"))));
 
         window.comboBox("actingAsComboBox").requireItemCount(2);
+    }
+    
+    @Test
+    public void testResourcesListedPopulatesListAndComboBox() {
+    	window.tabbedPane("tabbedPane").selectTab("Resources");
+        Resource roomA = new Resource("Meeting Room A");
+        Resource roomB = new Resource("Meeting Room B");
+
+        GuiActionRunner.execute(() -> rrsSwingView.resourcesListed(List.of(roomA, roomB)));
+
+        assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room A", "Meeting Room B");
+        window.comboBox("resourceComboBox").requireItemCount(2);
+    }
+
+    @Test
+    public void testResourceRegisteredUpdatesListComboBoxAndResetsError() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room C")));
+
+        assertThat(window.list("resourcesList").contents()).containsExactly("Meeting Room C");
+        window.comboBox("resourceComboBox").requireItemCount(1);
+        window.label("resourceErrorLabel").requireText(" ");
     }
 }
