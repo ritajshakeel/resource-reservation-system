@@ -75,4 +75,9 @@ public class RRSController {
             findReservationsForUser(user);
         }
     }
+    
+    public void loadUsers() {
+        List<User> users = userService.listAll();
+        view.usersListed(users);
+    }
 }
