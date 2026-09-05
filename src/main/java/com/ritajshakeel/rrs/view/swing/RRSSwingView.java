@@ -51,6 +51,9 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JSpinner endDateSpinner;
     private JButton bookButton;
     private JLabel bookErrorLabel;
+    
+    private DefaultListModel<Reservation> reservationsListModel;
+    private JList<Reservation> reservationsList;
 
     public RRSSwingView() {
     	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -66,7 +69,10 @@ public class RRSSwingView extends JFrame implements RRSView {
         actingAsPanel.add(new JLabel("Acting as:"));
         actingAsComboBox = new JComboBox<>();
         actingAsComboBox.setName("actingAsComboBox");
-        actingAsComboBox.addActionListener(e -> updateBookButtonState());
+        actingAsComboBox.addActionListener(e -> {
+            updateBookButtonState();
+            controller.onActingAsUserSelected((User) actingAsComboBox.getSelectedItem());
+        });
         actingAsPanel.add(actingAsComboBox);
         contentPane.add(actingAsPanel, BorderLayout.NORTH);
 
@@ -77,7 +83,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         tabbedPane.addTab("Register", buildRegisterPanel());
         tabbedPane.addTab("Resources", buildResourcePanel());
         tabbedPane.addTab("Book", buildBookPanel());
-        tabbedPane.addTab("My Reservations", new JPanel());
+        tabbedPane.addTab("My Reservations", buildMyReservationsPanel());
     }
 
     private JPanel buildRegisterPanel() {
@@ -181,6 +187,17 @@ public class RRSSwingView extends JFrame implements RRSView {
 
         return panel;
     }
+    
+    private JPanel buildMyReservationsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        reservationsListModel = new DefaultListModel<>();
+        reservationsList = new JList<>(reservationsListModel);
+        reservationsList.setName("reservationsList");
+
+        panel.add(new JScrollPane(reservationsList), BorderLayout.CENTER);
+        return panel;
+    }
 
     private LocalDateTime toLocalDateTime(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -246,7 +263,10 @@ public class RRSSwingView extends JFrame implements RRSView {
 
     @Override
     public void reservationsListed(List<Reservation> reservations) {
-        // to implement
+        reservationsListModel.clear();
+        for (Reservation reservation : reservations) {
+            reservationsListModel.addElement(reservation);
+        }
     }
 
     @Override

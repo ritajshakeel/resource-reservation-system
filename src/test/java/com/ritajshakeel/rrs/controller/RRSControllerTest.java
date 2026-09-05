@@ -1,6 +1,8 @@
 package com.ritajshakeel.rrs.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -124,5 +126,23 @@ public class RRSControllerTest {
         controller.loadResources();
 
         verify(view).resourcesListed(List.of(roomA, roomB));
+    }
+    
+    @Test
+    public void testOnActingAsUserSelectedLoadsReservationsWhenUserPresent() {
+        User user = new User("Alice");
+        Reservation reservation = mock(Reservation.class);
+        when(reservationService.findReservationsForUser(user)).thenReturn(List.of(reservation));
+
+        controller.onActingAsUserSelected(user);
+
+        verify(view).reservationsListed(List.of(reservation));
+    }
+
+    @Test
+    public void testOnActingAsUserSelectedDoesNothingWhenUserIsNull() {
+        controller.onActingAsUserSelected(null);
+
+        verify(view, never()).reservationsListed(any());
     }
 }

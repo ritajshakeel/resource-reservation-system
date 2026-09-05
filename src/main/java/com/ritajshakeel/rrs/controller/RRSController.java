@@ -69,4 +69,10 @@ public class RRSController {
         List<Resource> resources = resourceService.listAll();
         view.resourcesListed(resources);
     }
+    
+    public void onActingAsUserSelected(User user) {
+        if (user != null) {
+            findReservationsForUser(user);
+        }
+    }
 }

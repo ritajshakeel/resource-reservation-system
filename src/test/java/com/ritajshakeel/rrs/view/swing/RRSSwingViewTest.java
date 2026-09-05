@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -220,5 +221,28 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.button("registerResourceButton").click();
 
         verify(controller).registerResource("Meeting Room A");
+    }
+    
+    @Test
+    public void testSelectingActingAsUserLoadsTheirReservations() {
+        window.textBox("nameTextField").enterText("Alice");
+        window.button("registerUserButton").click();
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        verify(controller).onActingAsUserSelected(org.mockito.ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testReservationsListedPopulatesReservationsList() {
+        window.tabbedPane("tabbedPane").selectTab("My Reservations");
+        Reservation reservation = mock(Reservation.class);
+        when(reservation.toString()).thenReturn("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
+
+        GuiActionRunner.execute(() -> rrsSwingView.reservationsListed(List.of(reservation)));
+
+        assertThat(window.list("reservationsList").contents())
+            .containsExactly("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
     }
 }
