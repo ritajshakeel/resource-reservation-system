@@ -21,12 +21,7 @@ public class User {
     }
 
     public User(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name must not be null");
-        }
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("Name must not be empty");
-        }
+        NameValidator.validate(name);
         this.name = name;
     }
 
