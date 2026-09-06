@@ -34,6 +34,14 @@ public class JpaResourceTransactionManagerIT {
         overrides.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 
         entityManagerFactory = Persistence.createEntityManagerFactory("rrs", overrides);
+
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery(
+            "ALTER TABLE Resource ADD CONSTRAINT resource_name_unique UNIQUE (name) DEFERRABLE INITIALLY DEFERRED"
+        ).executeUpdate();
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @AfterClass
@@ -57,5 +65,16 @@ public class JpaResourceTransactionManagerIT {
                 .getSingleResult();
             assertThat(count).isZero();
         }
+    }
+
+    @Test
+    public void testCommitFailureLeavesTransactionInactiveBeforeCatchRuns() {
+        JpaResourceTransactionManager transactionManager = new JpaResourceTransactionManager(entityManagerFactory);
+
+        assertThatThrownBy(() -> transactionManager.doInTransaction(repository -> {
+            repository.save(new Resource("Duplicate"));
+            repository.save(new Resource("Duplicate"));
+            return null;
+        })).isInstanceOf(RuntimeException.class);
     }
 }
