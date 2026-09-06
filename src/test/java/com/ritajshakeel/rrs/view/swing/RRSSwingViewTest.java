@@ -18,6 +18,8 @@ import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JTabbedPane;
 
 import com.ritajshakeel.rrs.controller.RRSController;
@@ -382,5 +384,47 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.tabbedPane("tabbedPane").selectTab("My Reservations");
 
         verify(controller, atLeastOnce()).onActingAsUserSelected(any(User.class));
+    }
+
+    @Test
+    public void testClearingReservationSelectionDisablesConfirmAndCancelButtonsAgain() {
+        window.tabbedPane("tabbedPane").selectTab("My Reservations");
+        Reservation reservation = mock(Reservation.class);
+        when(reservation.toString()).thenReturn("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
+        GuiActionRunner.execute(() -> rrsSwingView.reservationsListed(List.of(reservation)));
+        window.list("reservationsList").selectItem(0);
+
+        GuiActionRunner.execute(((JList<?>) window.list("reservationsList").target())::clearSelection);
+
+        window.button("confirmReservationButton").requireDisabled();
+        window.button("cancelReservationButton").requireDisabled();
+    }
+
+    @Test
+    public void testDeselectingResourceDisablesBookButtonAgain() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        GuiActionRunner.execute(() -> ((JComboBox<?>) window.comboBox("resourceComboBox").target()).setSelectedItem(null));
+
+        window.button("bookButton").requireDisabled();
+    }
+
+    @Test
+    public void testDeselectingActingAsUserDisablesBookButtonAgain() {
+        window.tabbedPane("tabbedPane").selectTab("Resources");
+        GuiActionRunner.execute(() -> rrsSwingView.resourceRegistered(new Resource("Meeting Room A")));
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+        window.tabbedPane("tabbedPane").selectTab("Book");
+        window.comboBox("resourceComboBox").selectItem(0);
+        window.comboBox("actingAsComboBox").selectItem(0);
+
+        GuiActionRunner.execute(() -> ((JComboBox<?>) window.comboBox("actingAsComboBox").target()).setSelectedItem(null));
+
+        window.button("bookButton").requireDisabled();
     }
 }
