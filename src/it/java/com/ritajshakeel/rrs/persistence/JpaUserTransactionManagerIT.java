@@ -34,6 +34,15 @@ public class JpaUserTransactionManagerIT {
         overrides.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 
         entityManagerFactory = Persistence.createEntityManagerFactory("rrs", overrides);
+
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery(
+            "ALTER TABLE app_user ADD CONSTRAINT app_user_name_unique "
+          + "UNIQUE (name) DEFERRABLE INITIALLY DEFERRED"
+        ).executeUpdate();
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @AfterClass
@@ -57,5 +66,16 @@ public class JpaUserTransactionManagerIT {
                 .getSingleResult();
             assertThat(count).isZero();
         }
+    }
+
+    @Test
+    public void testCommitFailureLeavesTransactionInactiveBeforeCatchRuns() {
+        JpaUserTransactionManager transactionManager = new JpaUserTransactionManager(entityManagerFactory);
+
+        assertThatThrownBy(() -> transactionManager.doInTransaction(repository -> {
+            repository.save(new User("Duplicate"));
+            repository.save(new User("Duplicate"));
+            return null;
+        })).isInstanceOf(RuntimeException.class);
     }
 }

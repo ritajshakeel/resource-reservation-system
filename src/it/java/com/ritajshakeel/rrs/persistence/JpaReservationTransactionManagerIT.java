@@ -37,11 +37,45 @@ public class JpaReservationTransactionManagerIT {
         overrides.put("hibernate.connection.driver_class", "org.postgresql.Driver");
 
         entityManagerFactory = Persistence.createEntityManagerFactory("rrs", overrides);
+
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.createNativeQuery(
+            "ALTER TABLE Reservation ADD CONSTRAINT reservation_slot_unique UNIQUE (resource_id, start_time) DEFERRABLE INITIALLY DEFERRED"
+        ).executeUpdate();
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @AfterClass
     public static void tearDownClass() {
         entityManagerFactory.close();
+    }
+
+    private User persistUser(String name) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            User user = new User(name);
+            entityManager.persist(user);
+            entityManager.getTransaction().commit();
+            return user;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    private Resource persistResource(String name) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Resource resource = new Resource(name);
+            entityManager.persist(resource);
+            entityManager.getTransaction().commit();
+            return resource;
+        } finally {
+            entityManager.close();
+        }
     }
 
     @Test
@@ -70,29 +104,19 @@ public class JpaReservationTransactionManagerIT {
         }
     }
 
-    private User persistUser(String name) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            entityManager.getTransaction().begin();
-            User user = new User(name);
-            entityManager.persist(user);
-            entityManager.getTransaction().commit();
-            return user;
-        } finally {
-            entityManager.close();
-        }
-    }
+    @Test
+    public void testCommitFailureLeavesTransactionInactiveBeforeCatchRuns() {
+        User user = persistUser("Bob");
+        Resource resource = persistResource("Meeting Room Y");
+        LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
 
-    private Resource persistResource(String name) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            entityManager.getTransaction().begin();
-            Resource resource = new Resource(name);
-            entityManager.persist(resource);
-            entityManager.getTransaction().commit();
-            return resource;
-        } finally {
-            entityManager.close();
-        }
+        JpaReservationTransactionManager transactionManager =
+            new JpaReservationTransactionManager(entityManagerFactory);
+
+        assertThatThrownBy(() -> transactionManager.doInTransaction(repository -> {
+            repository.save(new Reservation(user, resource, start, start.plusHours(1)));
+            repository.save(new Reservation(user, resource, start, start.plusHours(2)));
+            return null;
+        })).isInstanceOf(RuntimeException.class);
     }
 }
