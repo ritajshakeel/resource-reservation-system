@@ -92,7 +92,7 @@ public class RRSModuleIT {
         assertThat(found).isNotNull();
         assertThat(found.getUser().getName()).isEqualTo("Eve");
     }
-    
+
     @Test
     public void testGuiceWiredUserServiceRegistersUserEndToEnd() {
         UserService userService = injector.getInstance(UserService.class);
@@ -114,7 +114,7 @@ public class RRSModuleIT {
         assertThat(found).isNotNull();
         assertThat(found.getName()).isEqualTo("Meeting Room H");
     }
-    
+
     @Test
     public void testGuiceWiredRRSSwingViewResolvesWithControllerSet() {
         RRSSwingView view = injector.getInstance(RRSSwingView.class);

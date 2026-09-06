@@ -48,7 +48,7 @@ public class RRSController {
             view.showBookingError(e.getMessage());
         }
     }
-    
+
     public void registerResource(String name) {
         try {
             Resource resource = resourceService.register(name);
@@ -80,18 +80,18 @@ public class RRSController {
         List<Reservation> reservations = reservationService.findReservationsForUser(user);
         view.reservationsListed(reservations);
     }
-    
+
     public void loadResources() {
         List<Resource> resources = resourceService.listAll();
         view.resourcesListed(resources);
     }
-    
+
     public void onActingAsUserSelected(User user) {
         if (user != null) {
             findReservationsForUser(user);
         }
     }
-    
+
     public void loadUsers() {
         List<User> users = userService.listAll();
         view.usersListed(users);

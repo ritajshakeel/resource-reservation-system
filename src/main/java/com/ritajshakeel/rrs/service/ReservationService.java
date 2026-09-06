@@ -26,7 +26,7 @@ public class ReservationService {
             return repository.save(new Reservation(user, resource, start, end));
         });
     }
-    
+
     public Reservation confirmReservation(Long reservationId) {
         return transactionManager.doInTransaction(repository -> {
             Reservation reservation = repository.findById(reservationId);
@@ -42,7 +42,7 @@ public class ReservationService {
             return reservation;
         });
     }
-    
+
     public List<Reservation> findReservationsForUser(User user) {
         return transactionManager.doInTransaction(repository -> repository.findByUser(user));
     }

@@ -47,7 +47,7 @@ public class RRSControllerTest {
 
         verify(view).userRegistered(user);
     }
-    
+
     @Test
     public void testBookReservationCallsServiceAndNotifiesView() {
         User user = new User("Alice");
@@ -61,7 +61,7 @@ public class RRSControllerTest {
 
         verify(view).reservationBooked(reservation);
     }
-    
+
     @Test
     public void testBookReservationWithOverlapNotifiesViewOfError() {
         User user = new User("Alice");
@@ -75,7 +75,7 @@ public class RRSControllerTest {
 
         verify(view).showBookingError(org.mockito.ArgumentMatchers.anyString());
     }
-    
+
     @Test
     public void testRegisterResourceCallsServiceAndNotifiesView() {
         Resource resource = new Resource("Meeting Room A");
@@ -116,7 +116,7 @@ public class RRSControllerTest {
 
         verify(view).reservationsListed(reservations);
     }
-    
+
     @Test
     public void testLoadResourcesFetchesAndNotifiesView() {
         Resource roomA = new Resource("Meeting Room A");
@@ -127,7 +127,7 @@ public class RRSControllerTest {
 
         verify(view).resourcesListed(List.of(roomA, roomB));
     }
-    
+
     @Test
     public void testOnActingAsUserSelectedLoadsReservationsWhenUserPresent() {
         User user = new User("Alice");
@@ -145,7 +145,7 @@ public class RRSControllerTest {
 
         verify(view, never()).reservationsListed(any());
     }
-    
+
     @Test
     public void testRegisterUserWithInvalidNameShowsRegistrationError() {
         when(userService.register("")).thenThrow(new IllegalArgumentException("Name must not be empty"));
@@ -163,7 +163,7 @@ public class RRSControllerTest {
 
         verify(view).showResourceRegistrationError("Name must not be empty");
     }
-    
+
     @Test
     public void testConfirmReservationWithInvalidTransitionShowsError() {
         when(reservationService.confirmReservation(5L))
@@ -183,7 +183,7 @@ public class RRSControllerTest {
 
         verify(view).showReservationActionError("Cannot cancel a cancelled reservation");
     }
-    
+
     @Test
     public void testBookReservationWithEndBeforeStartShowsError() {
         User user = new User("Alice");
@@ -197,7 +197,7 @@ public class RRSControllerTest {
 
         verify(view).showBookingError("End time must be after start time");
     }
-    
+
     @Test
     public void testLoadUsersFetchesAndNotifiesView() {
         User alice = new User("Alice");
