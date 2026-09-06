@@ -10,7 +10,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <testcontainers.version>1.21.4</testcontainers.version>
     <sonar.organization>ritajshakeel</sonar.organization>
-    
+
     <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S2699</sonar.issue.ignore.multicriteria.e1.ruleKey>
     <sonar.issue.ignore.multicriteria.e1.resourceKey>**/RRSSwingViewTest.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -18,7 +18,7 @@
     <sonar.issue.ignore.multicriteria.e2.resourceKey>**/Main.java</sonar.issue.ignore.multicriteria.e2.resourceKey>
     <sonar.issue.ignore.multicriteria.e3.ruleKey>java:S2143</sonar.issue.ignore.multicriteria.e3.ruleKey>
 <sonar.issue.ignore.multicriteria.e3.resourceKey>**/RRSSwingView.java</sonar.issue.ignore.multicriteria.e3.resourceKey>
-    
+
     <sonar.coverage.exclusions>**/Main.*</sonar.coverage.exclusions>
   </properties>
 
@@ -38,7 +38,7 @@
       <version>3.27.7</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-swing-junit</artifactId>
@@ -59,7 +59,7 @@
       <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
@@ -105,7 +105,7 @@
       <artifactId>guice</artifactId>
       <version>7.0.0</version>
     </dependency>
-	
+
 	<dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-assistedinject</artifactId>
@@ -135,7 +135,7 @@
             </execution>
           </executions>
         </plugin>
-        
+
         <plugin>
           <groupId>com.github.hazendaz.maven</groupId>
           <artifactId>coveralls-maven-plugin</artifactId>
@@ -144,13 +144,13 @@
             <repoToken>${env.COVERALLS_REPO_TOKEN}</repoToken>
           </configuration>
         </plugin>
-        
+
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
           <version>5.7.0.6970</version>
         </plugin>
-        
+
         <plugin>
           <groupId>org.pitest</groupId>
           <artifactId>pitest-maven</artifactId>
