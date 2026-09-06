@@ -77,27 +77,29 @@ public class ReservationServiceTest {
     }
 
     @Test
-    public void testConfirmReservationFetchesAndConfirmsWithoutExplicitSave() {
+    public void testConfirmReservationFetchesConfirmsAndReturnsIt() {
         Reservation reservation = mock(Reservation.class);
         when(repository.findById(5L)).thenReturn(reservation);
 
-        service.confirmReservation(5L);
+        Reservation result = service.confirmReservation(5L);
 
         verify(reservation).confirm();
         verify(repository, never()).save(any());
+        assertThat(result).isSameAs(reservation);
     }
 
     @Test
-    public void testCancelReservationFetchesAndCancelsWithoutExplicitSave() {
+    public void testCancelReservationFetchesCancelsAndReturnsIt() {
         Reservation reservation = mock(Reservation.class);
         when(repository.findById(5L)).thenReturn(reservation);
 
-        service.cancelReservation(5L);
+        Reservation result = service.cancelReservation(5L);
 
         verify(reservation).cancel();
         verify(repository, never()).save(any());
+        assertThat(result).isSameAs(reservation);
     }
-    
+
     @Test
     public void testFindReservationsForUserDelegatesToRepository() {
         User user = new User("Alice");

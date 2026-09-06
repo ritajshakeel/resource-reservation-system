@@ -148,6 +148,28 @@
           <artifactId>sonar-maven-plugin</artifactId>
           <version>5.7.0.6970</version>
         </plugin>
+        
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.17.4</version>
+          <configuration>
+            <targetClasses>
+              <param>com.ritajshakeel.rrs.domain.*</param>
+              <param>com.ritajshakeel.rrs.service.*</param>
+              <param>com.ritajshakeel.rrs.controller.*</param>
+            </targetClasses>
+            <targetTests>
+              <param>com.ritajshakeel.rrs.domain.*</param>
+              <param>com.ritajshakeel.rrs.service.*</param>
+              <param>com.ritajshakeel.rrs.controller.*</param>
+            </targetTests>
+            <mutators>
+              <mutator>DEFAULTS</mutator>
+            </mutators>
+            <mutationThreshold>100</mutationThreshold>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 

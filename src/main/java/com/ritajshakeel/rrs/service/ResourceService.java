@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 
 import com.ritajshakeel.rrs.domain.Resource;
 import com.ritajshakeel.rrs.persistence.ResourceTransactionManager;
+import com.ritajshakeel.rrs.repository.ResourceRepository;
 
 public class ResourceService {
 
@@ -21,6 +22,6 @@ public class ResourceService {
     }
 
     public List<Resource> listAll() {
-        return transactionManager.doInTransaction(repository -> repository.findAll());
+        return transactionManager.doInTransaction(ResourceRepository::findAll);
     }
 }

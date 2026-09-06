@@ -55,7 +55,7 @@ public class JpaUserTransactionManagerIT {
                     "SELECT COUNT(u) FROM User u WHERE u.name = :name", Long.class)
                 .setParameter("name", "ShouldNotPersist")
                 .getSingleResult();
-            assertThat(count).isEqualTo(0L);
+            assertThat(count).isZero();
         }
     }
 }

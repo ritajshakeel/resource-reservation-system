@@ -55,7 +55,7 @@ public class JpaResourceTransactionManagerIT {
                     "SELECT COUNT(r) FROM Resource r WHERE r.name = :name", Long.class)
                 .setParameter("name", "ShouldNotPersist")
                 .getSingleResult();
-            assertThat(count).isEqualTo(0L);
+            assertThat(count).isZero();
         }
     }
 }

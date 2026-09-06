@@ -45,7 +45,6 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JButton registerResourceButton;
     private JLabel resourceErrorLabel;
     private DefaultListModel<Resource> resourcesListModel;
-    private JList<Resource> resourcesList;
     
     private JSpinner startDateSpinner;
     private JSpinner endDateSpinner;
@@ -53,11 +52,11 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JLabel bookErrorLabel;
     
     private DefaultListModel<Reservation> reservationsListModel;
-    private JList<Reservation> reservationsList;
     
     private JLabel reservationsErrorLabel;
-    private JButton confirmReservationButton;
-    private JButton cancelReservationButton;
+    
+    
+    private static final String REGISTER_LABEL = "Register";
 
     public RRSSwingView() {
     	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -83,7 +82,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         tabbedPane.setName("tabbedPane");
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
-        tabbedPane.addTab("Register", buildRegisterPanel());
+        tabbedPane.addTab(REGISTER_LABEL, buildRegisterPanel());
         tabbedPane.addTab("Resources", buildResourcePanel());
         tabbedPane.addTab("Book", buildBookPanel());
         tabbedPane.addTab("My Reservations", buildMyReservationsPanel());
@@ -96,7 +95,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         nameTextField.setName("nameTextField");
         panel.add(nameTextField);
 
-        registerButton = new JButton("Register");
+        registerButton = new JButton(REGISTER_LABEL);
         registerButton.setName("registerUserButton");
         registerButton.setEnabled(false);
         registerButton.addActionListener(e -> controller.registerUser(nameTextField.getText()));
@@ -117,6 +116,8 @@ public class RRSSwingView extends JFrame implements RRSView {
     }
     
     private JPanel buildResourcePanel() {
+        JList<Resource> resourcesList;
+
         JPanel panel = new JPanel(new BorderLayout());
 
         JPanel formPanel = new JPanel(new FlowLayout());
@@ -125,7 +126,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         resourceNameTextField.setName("resourceNameTextField");
         formPanel.add(resourceNameTextField);
 
-        registerResourceButton = new JButton("Register");
+        registerResourceButton = new JButton(REGISTER_LABEL);
         registerResourceButton.setName("registerResourceButton");
         registerResourceButton.setEnabled(false);
         registerResourceButton.addActionListener(e -> controller.registerResource(resourceNameTextField.getText()));
@@ -193,6 +194,10 @@ public class RRSSwingView extends JFrame implements RRSView {
     }
     
     private JPanel buildMyReservationsPanel() {
+        JButton confirmReservationButton;
+        JButton cancelReservationButton;
+        JList<Reservation> reservationsList;
+
         JPanel panel = new JPanel(new BorderLayout());
 
         reservationsListModel = new DefaultListModel<>();

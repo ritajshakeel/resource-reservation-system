@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 
 import com.ritajshakeel.rrs.domain.User;
 import com.ritajshakeel.rrs.persistence.UserTransactionManager;
+import com.ritajshakeel.rrs.repository.UserRepository;
 
 public class UserService {
 
@@ -21,6 +22,6 @@ public class UserService {
     }
 
     public List<User> listAll() {
-        return transactionManager.doInTransaction(repository -> repository.findAll());
+        return transactionManager.doInTransaction(UserRepository::findAll);
     }
 }
