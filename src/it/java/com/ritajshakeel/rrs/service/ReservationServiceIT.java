@@ -110,7 +110,7 @@ public class ReservationServiceIT {
             .getSingleResult();
         assertThat(count).isEqualTo(1L);
     }
-    
+
     @Test
     public void testConfirmingReservationPersistsStatusChangeViaDirtyChecking() {
         User user = persistUser("Dave");

@@ -40,22 +40,22 @@ public class RRSSwingView extends JFrame implements RRSView {
     private JLabel errorLabel;
     private JComboBox<User> actingAsComboBox;
     private JComboBox<Resource> resourceComboBox;
-    
+
     private JTextField resourceNameTextField;
     private JButton registerResourceButton;
     private JLabel resourceErrorLabel;
     private DefaultListModel<Resource> resourcesListModel;
-    
+
     private JSpinner startDateSpinner;
     private JSpinner endDateSpinner;
     private JButton bookButton;
     private JLabel bookErrorLabel;
-    
+
     private DefaultListModel<Reservation> reservationsListModel;
-    
+
     private JLabel reservationsErrorLabel;
-    
-    
+
+
     private static final String REGISTER_LABEL = "Register";
 
     public RRSSwingView() {
@@ -79,6 +79,11 @@ public class RRSSwingView extends JFrame implements RRSView {
         contentPane.add(actingAsPanel, BorderLayout.NORTH);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addChangeListener(e -> {
+            if ("My Reservations".equals(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()))) {
+                controller.onActingAsUserSelected((User) actingAsComboBox.getSelectedItem());
+            }
+        });
         tabbedPane.setName("tabbedPane");
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
@@ -114,7 +119,7 @@ public class RRSSwingView extends JFrame implements RRSView {
 
         return panel;
     }
-    
+
     private JPanel buildResourcePanel() {
         JList<Resource> resourcesList;
 
@@ -151,7 +156,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         panel.add(new JScrollPane(resourcesList), BorderLayout.CENTER);
         return panel;
     }
-    
+
     private JPanel buildBookPanel() {
         JPanel panel = new JPanel(new FlowLayout());
 
@@ -192,7 +197,7 @@ public class RRSSwingView extends JFrame implements RRSView {
 
         return panel;
     }
-    
+
     private JPanel buildMyReservationsPanel() {
         JButton confirmReservationButton;
         JButton cancelReservationButton;
@@ -216,7 +221,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         cancelReservationButton.setEnabled(false);
         cancelReservationButton.addActionListener(e -> controller.cancelReservation(reservationsList.getSelectedValue().getId()));
         buttonPanel.add(cancelReservationButton);
-        
+
         reservationsErrorLabel = new JLabel(" ");
         reservationsErrorLabel.setName("reservationsErrorLabel");
         buttonPanel.add(reservationsErrorLabel);
@@ -241,7 +246,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         boolean hasUser = actingAsComboBox.getSelectedItem() != null;
         bookButton.setEnabled(hasResource && hasUser);
     }
-    
+
     private void resetDateSpinners() {
         Date now = new Date();
         Date oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -252,7 +257,7 @@ public class RRSSwingView extends JFrame implements RRSView {
     public void setController(RRSController controller) {
         this.controller = controller;
     }
-    
+
     public RRSController getController() {
         return controller;
     }
@@ -283,7 +288,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         resourceComboBox.addItem(resource);
         resourceErrorLabel.setText("Registered \"" + resource.getName() + "\".");
     }
-    
+
     @Override
     public void resourcesListed(List<Resource> resources) {
         resourcesListModel.clear();
@@ -319,7 +324,7 @@ public class RRSSwingView extends JFrame implements RRSView {
         reservationsErrorLabel.setText("Cancelled " + reservation + ".");
         controller.onActingAsUserSelected((User) actingAsComboBox.getSelectedItem());
     }
-    
+
     @Override
     public void showRegistrationError(String message) {
         errorLabel.setText(message);
@@ -333,6 +338,6 @@ public class RRSSwingView extends JFrame implements RRSView {
 	@Override
 	public void showReservationActionError(String message) {
 		reservationsErrorLabel.setText(message);
-		
+
 	}
 }

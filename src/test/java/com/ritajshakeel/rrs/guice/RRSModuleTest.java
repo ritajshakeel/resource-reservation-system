@@ -16,7 +16,7 @@ public class RRSModuleTest {
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("Could not find resource /does-not-exist.properties");
     }
-    
+
     @Test
     public void testCorruptedStreamThrowsUncheckedIOException() {
         InputStream throwingStream = new InputStream() {

@@ -31,7 +31,7 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalArgumentException.class)
 	        .hasMessage("User must not be null");
 	}
-	
+
 	@Test
 	public void testCreatingReservationWithNullResourceThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -43,7 +43,7 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalArgumentException.class)
 	        .hasMessage("Resource must not be null");
 	}
-	
+
 	@Test
 	public void testCreatingValidReservationStoresUserResourceAndTimes() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -58,7 +58,7 @@ public class ReservationTest {
 	    assertThat(reservation.getStart()).isEqualTo(start);
 	    assertThat(reservation.getEnd()).isEqualTo(end);
 	}
-	
+
 	@Test
 	public void testNewReservationHasPendingStatusByDefault() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -70,7 +70,7 @@ public class ReservationTest {
 
 	    assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.PENDING);
 	}
-	
+
 	@Test
 	public void testConfirmingPendingReservationChangesStatusToConfirmed() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -104,7 +104,7 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot confirm a cancelled reservation");
 	}
-	
+
 	@Test
 	public void testCancellingCancelledReservationThrowsException() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);
@@ -116,7 +116,7 @@ public class ReservationTest {
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot cancel a cancelled reservation");
 	}
-	
+
 	@Test
 	public void testToStringReturnsResourceAndTimeRangeAndStatus() {
 	    LocalDateTime start = LocalDateTime.of(2026, 7, 12, 9, 0);

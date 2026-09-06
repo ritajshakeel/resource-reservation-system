@@ -41,7 +41,7 @@ public class JpaReservationRepository implements ReservationRepository {
 
         return query.getSingleResult() > 0;
     }
-    
+
     @Override
     public List<Reservation> findByUser(User user) {
         TypedQuery<Reservation> query = entityManager.createQuery(
@@ -49,7 +49,7 @@ public class JpaReservationRepository implements ReservationRepository {
         query.setParameter("user", user);
         return query.getResultList();
     }
-    
+
     @Override
     public Reservation findById(Long id) {
         return entityManager.find(Reservation.class, id);

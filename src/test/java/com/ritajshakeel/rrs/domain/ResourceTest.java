@@ -19,11 +19,18 @@ public class ResourceTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Name must not be empty");
     }
-    
+
     @Test
     public void testGetNameReturnsConstructorValue() {
         Resource resource = new Resource("Meeting Room A");
 
         assertThat(resource.getName()).isEqualTo("Meeting Room A");
+    }
+
+    @Test
+    public void testToStringReturnsName() {
+        Resource resource = new Resource("Meeting Room A");
+
+        assertThat(resource).hasToString("Meeting Room A");
     }
 }

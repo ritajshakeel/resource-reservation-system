@@ -3,6 +3,7 @@ package com.ritajshakeel.rrs.view.swing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,7 +64,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         verify(controller).registerUser("Alice");
     }
-    
+
     @Test
     public void testTabsArePresent() {
         JTabbedPane tabbedPane = (JTabbedPane) window.tabbedPane("tabbedPane").target();
@@ -78,7 +79,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
     public void testActingAsComboBoxIsPresentAndInitiallyEmpty() {
         window.comboBox("actingAsComboBox").requireItemCount(0);
     }
-    
+
     @Test
     public void testRegisteringUserAddsThemToActingAsComboBox() {
         window.textBox("nameTextField").enterText("Alice");
@@ -96,7 +97,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.comboBox("actingAsComboBox").requireItemCount(2);
     }
-    
+
     @Test
     public void testResourcesListedPopulatesListAndComboBox() {
         window.tabbedPane("tabbedPane").selectTab("Resources");
@@ -121,7 +122,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.tabbedPane("tabbedPane").selectTab("Book");
         window.comboBox("resourceComboBox").requireItemCount(1);
     }
-    
+
     @Test
     public void testBookButtonDisabledUntilResourceSelected() {
         window.tabbedPane("tabbedPane").selectTab("Book");
@@ -144,7 +145,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         verify(controller).bookReservation(eq(user), eq(resource), any(), any());
     }
-    
+
     @Test
     public void testRegisterResourceButtonIsEnabledWhenNameIsEntered() {
         window.tabbedPane("tabbedPane").selectTab("Resources");
@@ -153,12 +154,12 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.button("registerResourceButton").requireEnabled();
     }
-    
+
     @Test
     public void testGetControllerReturnsSetController() {
         assertThat(rrsSwingView.getController()).isSameAs(controller);
     }
-    
+
     @Test
     public void testBookButtonStaysDisabledWithResourceButNoUser() {
         window.tabbedPane("tabbedPane").selectTab("Resources");
@@ -181,7 +182,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.button("bookButton").requireEnabled();
     }
-    
+
     @Test
     public void testRegisterButtonDisabledAgainWhenNameIsCleared() {
         window.textBox("nameTextField").enterText("Alice");
@@ -198,7 +199,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.button("registerResourceButton").requireDisabled();
     }
-    
+
     @Test
     public void testClickingRegisterResourceButtonCallsControllerWithEnteredName() {
         window.tabbedPane("tabbedPane").selectTab("Resources");
@@ -207,7 +208,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         verify(controller).registerResource("Meeting Room A");
     }
-    
+
     @Test
     public void testSelectingActingAsUserLoadsTheirReservations() {
         window.textBox("nameTextField").enterText("Alice");
@@ -230,7 +231,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(window.list("reservationsList").contents())
             .containsExactly("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
     }
-    
+
     @Test
     public void testShowBookingErrorSetsBookErrorLabelText() {
         window.tabbedPane("tabbedPane").selectTab("Book");
@@ -238,7 +239,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.label("bookErrorLabel").requireText("Something went wrong");
     }
-    
+
     @Test
     public void testBookTabDefaultsEndTimeOneHourAfterStart() {
         window.tabbedPane("tabbedPane").selectTab("Book");
@@ -259,7 +260,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         Date end = (Date) window.spinner("endDateSpinner").target().getValue();
         assertThat(end.getTime() - start.getTime()).isEqualTo(60 * 60 * 1000);
     }
-    
+
     @Test
     public void testShowRegistrationErrorSetsErrorLabelText() {
         GuiActionRunner.execute(() -> rrsSwingView.showRegistrationError("Name must not be empty"));
@@ -274,7 +275,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.label("resourceErrorLabel").requireText("Name must not be empty");
     }
-    
+
     @Test
     public void testReservationBookedShowsSuccessMessage() {
         window.tabbedPane("tabbedPane").selectTab("Book");
@@ -285,7 +286,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.label("bookErrorLabel").requireText("Booked Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING).");
     }
-    
+
     @Test
     public void testReservationConfirmedShowsSuccessMessage() {
         window.tabbedPane("tabbedPane").selectTab("My Reservations");
@@ -307,7 +308,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.label("reservationsErrorLabel").requireText("Cancelled Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (CANCELLED).");
     }
-    
+
     @Test
     public void testShowReservationActionErrorSetsReservationsErrorLabelText() {
         window.tabbedPane("tabbedPane").selectTab("My Reservations");
@@ -316,7 +317,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
 
         window.label("reservationsErrorLabel").requireText("Cannot cancel a cancelled reservation");
     }
-    
+
     @Test
     public void testSelectingReservationEnablesConfirmAndCancelButtons() {
         window.tabbedPane("tabbedPane").selectTab("My Reservations");
@@ -343,7 +344,7 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.button("confirmReservationButton").requireDisabled();
         window.button("cancelReservationButton").requireDisabled();
     }
-    
+
     @Test
     public void testClickingConfirmButtonCallsControllerWithSelectedReservationId() {
         window.tabbedPane("tabbedPane").selectTab("My Reservations");
@@ -370,5 +371,16 @@ public class RRSSwingViewTest extends AssertJSwingJUnitTestCase {
         window.button("cancelReservationButton").click();
 
         verify(controller).cancelReservation(5L);
+    }
+
+    @Test
+    public void testSelectingMyReservationsTabRefreshesReservationsForCurrentUser() {
+        window.textBox("nameTextField").enterText("Alice");
+        window.button("registerUserButton").click();
+        GuiActionRunner.execute(() -> rrsSwingView.userRegistered(new User("Alice")));
+
+        window.tabbedPane("tabbedPane").selectTab("My Reservations");
+
+        verify(controller, atLeastOnce()).onActingAsUserSelected(any(User.class));
     }
 }

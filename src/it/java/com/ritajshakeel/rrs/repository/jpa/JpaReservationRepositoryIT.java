@@ -139,7 +139,7 @@ public class JpaReservationRepositoryIT {
 
         assertThat(overlaps).isFalse();
     }
-    
+
     @Test
     public void testFindByUserReturnsOnlyThatUsersReservations() {
         Resource resource = persistResource("Meeting Room E");

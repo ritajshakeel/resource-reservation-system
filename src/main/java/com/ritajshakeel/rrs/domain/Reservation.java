@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Reservation {
-	
+
 	private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Id
@@ -97,7 +97,7 @@ public class Reservation {
         }
         this.status = ReservationStatus.CANCELLED;
     }
-    
+
     @Override
     public String toString() {
         return resource + ": " + start.format(DISPLAY_FORMAT) + " - " + end.format(DISPLAY_FORMAT) + " (" + status + ")";

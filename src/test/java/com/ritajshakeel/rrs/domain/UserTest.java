@@ -12,21 +12,21 @@ public class UserTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Name must not be null");
     }
-    
+
     @Test
     public void testCreatingUserWithEmptyNameThrowsException() {
         assertThatThrownBy(() -> new User(""))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Name must not be empty");
     }
-    
+
     @Test
     public void testGetNameReturnsConstructorValue() {
         User user = new User("Alice");
 
         assertThat(user.getName()).isEqualTo("Alice");
     }
-    
+
     @Test
     public void testToStringReturnsName() {
         User user = new User("Alice");
