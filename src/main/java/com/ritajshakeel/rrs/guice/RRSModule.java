@@ -1,5 +1,9 @@
 package com.ritajshakeel.rrs.guice;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Properties;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,9 +27,21 @@ import com.ritajshakeel.rrs.view.swing.RRSSwingView;
 
 public class RRSModule extends AbstractModule {
 
-    private String dbUrl = "jdbc:postgresql://localhost:5432/rrs";
-    private String dbUsername = "postgres";
-    private String dbPassword = "postgres";
+    private String dbUrl;
+    private String dbUsername;
+    private String dbPassword;
+
+    public RRSModule() {
+        Properties defaults = new Properties();
+        try (InputStream in = getClass().getResourceAsStream("/db.properties")) {
+            defaults.load(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load db.properties", e);
+        }
+        this.dbUrl = defaults.getProperty("db.url");
+        this.dbUsername = defaults.getProperty("db.username");
+        this.dbPassword = defaults.getProperty("db.password");
+    }
 
     public RRSModule dbUrl(String dbUrl) {
         this.dbUrl = dbUrl;
