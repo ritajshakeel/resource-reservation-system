@@ -45,3 +45,7 @@ jobs:
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: Run Mutation Testing (PIT)
+      if: github.event_name == 'push'
+      run: xvfb-run mvn test org.pitest:pitest-maven:mutationCoverage
