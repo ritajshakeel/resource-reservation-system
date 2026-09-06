@@ -100,7 +100,7 @@ public class ReservationTest {
 	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 	    reservation.cancel();
 
-	    assertThatThrownBy(() -> reservation.confirm())
+	    assertThatThrownBy(reservation::confirm)
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot confirm a cancelled reservation");
 	}
@@ -112,7 +112,7 @@ public class ReservationTest {
 	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 	    reservation.cancel();
 
-	    assertThatThrownBy(() -> reservation.cancel())
+	    assertThatThrownBy(reservation::cancel)
 	        .isInstanceOf(IllegalStateException.class)
 	        .hasMessage("Cannot cancel a cancelled reservation");
 	}
@@ -123,7 +123,6 @@ public class ReservationTest {
 	    LocalDateTime end = LocalDateTime.of(2026, 7, 12, 10, 0);
 	    Reservation reservation = new Reservation(new User("Alice"), new Resource("Meeting Room A"), start, end);
 
-	    assertThat(reservation.toString())
-	        .isEqualTo("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
+	    assertThat(reservation).hasToString("Meeting Room A: 2026-07-12 09:00 - 2026-07-12 10:00 (PENDING)");
 	}
 }
